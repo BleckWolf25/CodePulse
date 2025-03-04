@@ -1,4 +1,4 @@
-# developer-productivity-dashboard README
+# Developer Productivity Dashboard README
 
 This is the README for your extension "developer-productivity-dashboard". After writing up a brief description, we recommend including the following sections.
 

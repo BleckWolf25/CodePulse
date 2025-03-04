@@ -3,19 +3,81 @@
   "displayName": "Developer Productivity DashBoard",
   "description": "An Extension to keep track of your productivity and coding patterns to help you out.",
   "version": "0.0.1",
+  "publisher": "BleckWolf25",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.97.0"
   },
-  "categories": [
-    "Other"
+  "keywords": [
+    "productivity",
+    "metrics",
+    "code-analysis",
+    "developer-tools"
   ],
-  "activationEvents": [],
+  "categories": [
+    "Other",
+    "Programming Languages",
+    "Linters"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Only basic metrics tracking is available in untrusted workspaces"
+    }
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "Productivity Dashboard",
+      "properties": {
+        "productivityDashboard.enableMetricTracking": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable metric tracking"
+        },
+        "productivityDashboard.complexityThreshold": {
+          "type": "number",
+          "default": 10,
+          "description": "Threshold for code complexity warning"
+        },
+        "productivityDashboard.trackingInterval": {
+          "type": "number",
+          "default": 30,
+          "description": "Tracking interval in minutes"
+        },
+        "productivityDashboard.excludedLanguages": {
+          "type": "array",
+          "default": [
+            "json",
+            "lock"
+          ],
+          "description": "Languages to exclude from tracking"
+        },
+        "productivityDashboard.enableDetailedLogging": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable detailed logging of metrics"
+        },
+        "productivityDashboard.retentionPeriod": {
+          "type": "number",
+          "default": 90,
+          "description": "Number of days to retain metrics"
+        }
+      }
+    },
     "commands": [
       {
-        "command": "developer-productivity-dashboard.helloWorld",
-        "title": "Hello World"
+        "command": "productivityDashboard.show",
+        "title": "Show Productivity Dashboard",
+        "category": "Productivity"
+      },
+      {
+        "command": "productivityDashboard.exportMetrics",
+        "title": "Export Productivity Metrics",
+        "category": "Productivity"
       }
     ]
   },
@@ -30,20 +92,25 @@
     "watch-tests": "tsc -p . -w --outDir out",
     "pretest": "npm run compile-tests && npm run compile && npm run lint",
     "check-types": "tsc --noEmit",
-    "lint": "eslint src",
+    "lint": "eslint src --ext ts",
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.97.0",
     "@types/mocha": "^10.0.10",
-    "@types/node": "20.x",
-    "@typescript-eslint/eslint-plugin": "^8.25.0",
-    "@typescript-eslint/parser": "^8.25.0",
-    "eslint": "^9.21.0",
-    "esbuild": "^0.25.0",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.7.3",
+    "@types/node": "^20.17.23",
+    "@types/vscode": "^1.97.0",
+    "@typescript-eslint/eslint-plugin": "^8.26.0",
+    "@typescript-eslint/parser": "^8.26.0",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.2.2",
+    "esbuild": "^0.25.0",
+    "esbuild-node-externals": "^1.18.0",
+    "eslint": "^9.21.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.8"
   }
 }
