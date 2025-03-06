@@ -1,0 +1,11 @@
+{
+  "inputs": [
+    "src/utils/cache.ts",
+    "src/metrics/storage.ts",
+    "src/views/charts.ts",
+    "src/extension.ts"
+  ],
+  "outputs": [
+    "dist/extension.js"
+  ]
+}

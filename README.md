@@ -1,71 +1,179 @@
-# Developer Productivity Dashboard README
+# Code Pulse - Developer Productivity Dashboard (DPD) VS Code Extension
 
-This is the README for your extension "developer-productivity-dashboard". After writing up a brief description, we recommend including the following sections.
+## 🎯 Project Vision
 
-## Features
+Code Pulse is a TypeScript-based VS Code extension that provides comprehensive coding metrics, visualizations, and insights to help developers understand their coding patterns, complexity, and productivity.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## 📊 Features
 
-For example if there is an image subfolder under your extension project workspace:
+- Multi-language code complexity analysis
+- Persistent metrics tracking
+- Interactive dashboard with charts
+- Configurable tracking options
+- Exportable metrics
+- Performance-conscious design
 
-\!\[feature X\]\(images/feature-x.png\)
+## 📦 Project Structure
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+```zsh
+code-pulse/
+│
+├── src/
+│   ├── extension.ts                # Main extension entry point
+│   ├── metrics/
+│   │   ├── complexity-alerts.ts    # Complexity Alerts
+│   │   ├── complexity.ts           # Complexity Metrics logic
+│   │   ├── debounce-tracker.ts     # Debounce tracker system
+│   │   ├── storage.ts              # Persistent storage management
+│   │   └── tracker.ts              # Core metrics logic
+│   │
+│   ├── test/
+│   │   └── extension.test.ts       # Extension test logic
+│   │
+│   ├── utils/
+│   │   ├── advanced-config.ts      # Multi-language support
+│   │   ├── cache.ts                # Caching system
+│   │   ├── config-export.ts        # Export metrics
+│   │   ├── config.ts               # Extension configuration management
+│   │   └── error-handler.ts        # Error handler system
+│   │
+│   └── views/
+│       ├── dashboard.ts            # Webview dashboard logic
+│       └── charts.ts               # Chart rendering logic
+│   
+│
+├── package.json                    # Extension manifest
+├── tsconfig.json                   # TypeScript configuration
+├── esbuild.js                      # Build configuration
+├── .vscodeignore                   # VS Code extension ignore file
+│
+├── resources/
+│   ├── icons/                      # Extension icons
+│   └── templates/                  # Dashboard HTML templates (soon)
+│
+└── dist/                           # Compiled extension
+```
 
-## Requirements
+## 🧩 Modules and Their Responsibilities
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+### Complexity Analysis (`complexity.ts`)
 
-## Extension Settings
+- Performs deep code complexity analysis
+- Calculates multiple complexity metrics:
+  - Cyclomatic Complexity
+  - Maintainability Index
+  - Halstead Complexity Measures
+- Generates actionable code improvement recommendations
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+### Metrics Tracking (`tracker.ts`)
 
-For example:
+- Tracks coding activities across files and languages
+- Collects detailed file and session metrics
+- Manages tracking configuration
+- Provides session insights and aggregation
+
+### Persistent Storage (`storage.ts`)
+
+- Manages long-term storage of coding metrics
+- Handles file system interactions
+- Implements data retention and pruning strategies
+
+### Configuration Management (`config.ts`)
+
+- Provides centralized configuration handling
+- Supports dynamic configuration updates
+- Manages extension-wide settings
+
+### Dashboard and Visualization (`dashboard.ts` & `charts.ts`)
+
+- Generates interactive web-based dashboards
+- Creates visualizations using Chart.js
+- Supports metrics export and refreshing
+
+## 🛠 Configuration Files
+
+### `package.json`
+
+- Defines extension metadata
+- Specifies configuration options
+- Lists dependencies and scripts
+- Configures activation events and commands
+
+### `tsconfig.json`
+
+- Configures TypeScript compilation
+- Enables strict type checking
+- Defines module resolution and target
+
+### `esbuild.js`
+
+- Manages build process
+- Supports development and production builds
+- Generates build insights
+- Handles external dependencies
+
+## 🔧 Extension Settings
 
 This extension contributes the following settings:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+- `productivityDashboard.enableMetricTracking`: Enable or disable metric tracking.
+- `productivityDashboard.complexityThresholds`: Define complexity thresholds per language.
+- `productivityDashboard.complexityThreshold`: Set general complexity threshold.
+- `productivityDashboard.trackingInterval`: Configure tracking intervals in minutes.
+- `productivityDashboard.excludedLanguages`: Exclude specific languages from tracking.
+- `productivityDashboard.enableDetailedLogging`: Enable or disable detailed logging.
+- `productivityDashboard.retentionPeriod`: Configure data retention in days.
 
-## Known Issues
+## 🖼 Screenshots
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Soon, I'll realease screenshots
 
-## Release Notes
+## 📌 Requirements
 
-Users appreciate release notes as you update your extension.
+- VS Code `^1.98.0`
+- Node.js `>=16.0.0`
 
-### 1.0.0
+Download VS Code: <https://code.visualstudio.com/download>
+Download Node.js: <https://nodejs.org/en>
 
-Initial release of ...
+## 🚀 Future Enhancements
 
-### 1.0.1
+- Machine learning-based complexity prediction
+- More advanced visualizations
+- Language-specific deep analysis
+- Integration with external code quality tools
 
-Fixed issue #.
+## 🧪 Potential Testing
 
-### 1.1.0
+- Unit tests for complexity calculations
+- Integration tests for tracking logic
+- Mock VS Code extension context
+- Performance benchmarking
 
-Added features X, Y, and Z.
+## 🛠 Technologies Used
 
----
+- TypeScript
+- VS Code Extension API
+- Chart.js
+- esbuild
+- Node.js APIs
+- ESLint
+- Mocha
 
-## Following extension guidelines
+## 🛠 Design Principles
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+- Modular architecture
+- Loose coupling
+- Extensibility
+- Performance optimization
+- Comprehensive type safety
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+## 🐞 Known Issues
 
-## Working with Markdown
+List any known issues and potential fixes.
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+## 📜 Release Notes
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+Check [here](./CHANGELOG.md) for more information about Release Notes.
 
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+**Enjoy productivity on another level!**

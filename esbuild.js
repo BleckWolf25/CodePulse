@@ -11,10 +11,14 @@ const baseConfig = {
   bundle: true,
   minify: true,
   platform: 'node',
-  target: ['node16'],
+  target: 'node20',
   outfile: 'dist/extension.js',
   plugins: [nodeExternalsPlugin()],
-  external: ['vscode']
+  external: ['vscode', 'nyc', 'mocha'],
+  format: 'cjs',
+  sourcemap: false,
+  target: 'es2020',
+  metafile: true
 };
 
 function logBuildDetails(result) {
@@ -32,19 +36,30 @@ function logBuildDetails(result) {
 
 async function build() {
   try {
-    const result = await esbuild.build({
+    const buildOptions = {
       ...baseConfig,
-      metafile: true,
-      watch: isWatch ? {
-        onRebuild(error) {
-          if (error) {console.error('Rebuild failed:', error);}
-          else {console.log('Rebuild successful');}
+      ...(isWatch ? { 
+        watch: {
+          onRebuild(error, result) {
+            if (error) {
+              console.error('Rebuild failed:', error);
+            } else {
+              console.log('Rebuild successful');
+              if (result) {
+                logBuildDetails(result);
+              }
+            }
+          }
         }
-      } : false
-    });
+      } : {})
+    };
 
-    logBuildDetails(result);
-    console.log('Build complete! 🚀');
+    const result = await esbuild.build(buildOptions);
+
+    if (!isWatch) {
+      logBuildDetails(result);
+      console.log('Build complete! 🚀');
+    }
   } catch (error) {
     console.error('Build failed:', error);
     process.exit(1);

@@ -2,6 +2,22 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { ComplexityMetrics } from './complexity'; // Add this import
+
+export interface CodeMetrics {
+  path: string;
+  language: string;
+  lines: number;
+  complexity: ComplexityMetrics;
+  lastModified: Date;
+}
+
+export interface DailyMetrics {
+  date: string;
+  totalCodingTime: number;
+  filesEdited: number;
+  languages: Record<string, number>;
+}
 
 export interface StoredMetrics {
   dailyMetrics: DailyMetrics[];
@@ -22,7 +38,7 @@ export class MetricsStorage {
       fs.mkdirSync(path.dirname(this.storagePath), { recursive: true });
       fs.writeFileSync(this.storagePath, JSON.stringify(metrics, null, 2));
     } catch (error) {
-      vscode.window.showErrorMessage(`Failed to save metrics: ${error}`);
+      vscode.window.showErrorMessage(`Failed to save metrics: ${error instanceof Error ? error.message : error}`);
     }
   }
 
@@ -33,7 +49,7 @@ export class MetricsStorage {
         return JSON.parse(rawData);
       }
     } catch (error) {
-      vscode.window.showWarningMessage(`Failed to load metrics: ${error}`);
+      vscode.window.showWarningMessage(`Failed to load metrics: ${error instanceof Error ? error.message : error}`);
     }
 
     // Return default structure if no existing data

@@ -11,7 +11,13 @@ export interface ProductivityConfig {
 
 export class ConfigManager {
   private static instance: ConfigManager;
-  private config: ProductivityConfig;
+  private config: ProductivityConfig = {
+    enableMetricTracking: true,
+    complexityThreshold: 10,
+    trackingInterval: 30,
+    excludedLanguages: ['json', 'lock'],
+    enableDetailedLogging: false
+  };
 
   private constructor() {
     this.loadConfiguration();
