@@ -18,7 +18,7 @@
       "Linters",
       "Visualization"
     ],
-    "icon": "resources/icons/PD_original.jpg",
+    "icon": "resources/icons/CP_original.jpg",
     "galleryBanner": {
       "color": "#1e1e1e",
       "theme": "dark"
@@ -28,7 +28,7 @@
       "url": "https://github.com/BleckWolf25/CodePulse.git"
     }
   },
-  "icon": "resources/icons/PD_original.jpg",
+  "icon": "resources/icons/CP_original.jpg",
   "repository": {
     "type": "git",
     "url": "https://github.com/BleckWolf25/CodePulse.git"
