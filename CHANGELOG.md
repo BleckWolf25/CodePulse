@@ -2,6 +2,34 @@
 
 ---------------------------------------------------------------------------------------
 
+## [1.0.1] - 2025-03-05
+
+### Added
+
+- Added missing packages.
+- Added missing commands.
+- Added more commands.
+- Added Data Flow Diagram documentation.
+- Added Project architecture documentation.
+
+### Changed
+
+- Changed all the files to ensure proper documentation & best practises of typescript.
+- Changed gitignore to ignore uploading unecessary files to github.
+- Made the dashboard a bit more responsive and fancier.
+
+### Removed
+
+- Temporary removal of extension.test.ts.
+
+### Fixed
+
+- Fixed esbuild issues.
+- Fixed package.json missing peerDependecies.
+- Fixed conflict between config files.
+
+---------------------------------------------------------------------------------------
+
 ## [1.0.0-alpha] - 2025-03-05
 
 ### Added

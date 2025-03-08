@@ -1,17 +1,49 @@
-// src/utils/config.ts
+/**
+ * src/utils/config.ts
+ * 
+ * Core Configuration Manager
+ * 
+ * Handles extension settings using VSCode's configuration API
+ * Implements singleton pattern for consistent access
+ */
+
+// -------------------- IMPORTS -------------------- \\
+
 import * as vscode from 'vscode';
 
+// -------------------- EXPORTS -------------------- \\
+
+/**
+ * Extension configuration schema
+ * @interface ProductivityConfig
+ * @property {boolean} enableMetricTracking - Master toggle for data collection
+ * @property {number} complexityThreshold - Global complexity alert threshold
+ * @property {number} trackingInterval - Data collection frequency in minutes
+ * @property {string[]} excludedLanguages - File types to ignore
+ * @property {boolean} enableDetailedLogging - Debug logging toggle
+ */
 export interface ProductivityConfig {
   enableMetricTracking: boolean;
   complexityThreshold: number;
-  trackingInterval: number; // in minutes
+  trackingInterval: number;
   excludedLanguages: string[];
   enableDetailedLogging: boolean;
 }
 
+/**
+ * Central configuration service
+ * @class
+ * @remarks
+ * - Automatically reloads settings on configuration changes
+ * - Provides type-safe access to settings
+ * - Uses VSCode's workspace configuration as source of truth
+ */
 export class ConfigManager {
   private static instance: ConfigManager;
-  private config: ProductivityConfig = {
+  private config!: ProductivityConfig;
+
+  // Default configuration values
+  private readonly DEFAULTS = {
     enableMetricTracking: true,
     complexityThreshold: 10,
     trackingInterval: 30,
@@ -21,31 +53,40 @@ export class ConfigManager {
 
   private constructor() {
     this.loadConfiguration();
-    
-    // Listen for configuration changes
-    vscode.workspace.onDidChangeConfiguration(this.loadConfiguration.bind(this));
+    vscode.workspace.onDidChangeConfiguration(() => this.loadConfiguration());
   }
 
+  /**
+   * Singleton accessor
+   * @returns Single instance of ConfigManager
+   */
   public static getInstance(): ConfigManager {
-    if (!ConfigManager.instance) {
-      ConfigManager.instance = new ConfigManager();
-    }
-    return ConfigManager.instance;
+    return this.instance || (this.instance = new ConfigManager());
   }
 
+  /**
+   * Load configuration from VSCode settings
+   * @remarks
+   * - Merges user settings with defaults
+   * - Automatically called on configuration changes
+   */
   private loadConfiguration() {
     const config = vscode.workspace.getConfiguration('productivityDashboard');
-    
+
     this.config = {
-      enableMetricTracking: config.get('enableMetricTracking', true),
-      complexityThreshold: config.get('complexityThreshold', 10),
-      trackingInterval: config.get('trackingInterval', 30),
-      excludedLanguages: config.get('excludedLanguages', ['json', 'lock']),
-      enableDetailedLogging: config.get('enableDetailedLogging', false)
+      enableMetricTracking: config.get('enableMetricTracking', this.DEFAULTS.enableMetricTracking),
+      complexityThreshold: config.get('complexityThreshold', this.DEFAULTS.complexityThreshold),
+      trackingInterval: config.get('trackingInterval', this.DEFAULTS.trackingInterval),
+      excludedLanguages: config.get('excludedLanguages', this.DEFAULTS.excludedLanguages),
+      enableDetailedLogging: config.get('enableDetailedLogging', this.DEFAULTS.enableDetailedLogging)
     };
   }
 
+  /**
+   * Get current configuration snapshot
+   * @returns Readonly configuration object
+   */
   public getConfig(): ProductivityConfig {
-    return this.config;
+    return { ...this.config }; // Return copy to prevent mutation
   }
 }

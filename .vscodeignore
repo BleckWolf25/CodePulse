@@ -1,7 +1,6 @@
 # .vscodeignore
 .vscode/**
 node_modules/**
-**/node_modules/nyc/**
 **/node_modules/mocha/**
 src/**
 out/**

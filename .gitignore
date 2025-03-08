@@ -1,7 +1,19 @@
-out
-dist
-node_modules
+out/
+dist/
+node_modules/
+package-lock.json
+yarn.lock
 .vscode-test/
 *.vsix
 .DS_Store
 /DS_Store
+*.log #logs files
+*.map #source map files
+/coverage
+/.nyc_output
+
+# Typescript related
+*.tsbuildinfo
+
+# OS generated files #example of other OS files that may be generated.
+Thumbs.db

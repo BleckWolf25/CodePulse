@@ -1,8 +1,14 @@
 {
   "inputs": [
-    "src/utils/cache.ts",
+    "node_modules/typescript/lib/typescript.js",
+    "src/metrics/complexity.ts",
+    "src/utils/config.ts",
     "src/metrics/storage.ts",
+    "src/utils/cache.ts",
     "src/views/charts.ts",
+    "src/metrics/tracker.ts",
+    "src/views/dashboard.ts",
+    "src/utils/config-export.ts",
     "src/extension.ts"
   ],
   "outputs": [

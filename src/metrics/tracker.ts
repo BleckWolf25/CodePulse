@@ -1,4 +1,15 @@
-// src/metrics/tracker.ts
+/**
+ * src/metrics/tracker.ts
+ * 
+ * Tracker.ts
+ * File analysis pipeline
+ * Session tracking
+ * Event debouncing
+ * Storage integration
+ */
+
+// -------------------- IMPORTS -------------------- \\
+
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { CodeComplexityAnalyzer, ComplexityMetrics } from './complexity';
@@ -6,7 +17,11 @@ import { ConfigManager } from '../utils/config';
 import { MetricsStorage } from './storage';
 import { performance } from 'perf_hooks';
 import { MetricCache } from '../utils/cache';
+import { MetricsChartGenerator } from '../views/charts';
 
+// -------------------- EXPORTS -------------------- \\
+
+// Exports File Meta Data
 export interface FileMetadata {
   path: string;
   language: string;
@@ -15,6 +30,7 @@ export interface FileMetadata {
   lastModified: Date;
 }
 
+// Exports Session Data
 export interface SessionData {
   startTime: number;
   endTime?: number;
@@ -23,81 +39,137 @@ export interface SessionData {
   fileChanges: string[];
 }
 
+// -------------------- MAIN EXPORT -------------------- \\
+
 export class MetricsTracker {
   private context: vscode.ExtensionContext;
   private config: ConfigManager;
   private storage: MetricsStorage;
+  private chartGenerator: MetricsChartGenerator;
   private trackedFiles = new MetricCache<FileMetadata>();
   private outputChannel: vscode.OutputChannel | null = null;
+  private disposables: vscode.Disposable[] = [];
 
-  // Session tracking properties
+  // Session tracking
   private sessionsLog: SessionData[] = [];
   private lastActivityTime: number = Date.now();
-  private idleThreshold: number = 5 * 60 * 1000; // 5 minutes
-  
-  // Debounce handling
+  private idleThreshold: number = 5 * 60 * 1000;
   private analysisQueue: Set<string> = new Set();
   private debounceTimeout: NodeJS.Timeout | null = null;
-  private readonly DEBOUNCE_DELAY = 500; // ms
+  private readonly DEBOUNCE_DELAY = 500;
 
+  /**
+   * Initializes tracking system and restores previous state.
+   * * This constructor sets up the metrics tracker by:
+   * 1. Loading persisted data from storage.
+   * 2. Starting a new session.
+   * 3. Initializing event listeners for tracking file changes and user activity.
+   * * @param context - Extension context for storage and resources.
+   */
   constructor(context: vscode.ExtensionContext) {
     this.context = context;
     this.config = ConfigManager.getInstance();
     this.storage = new MetricsStorage(context);
-    
-    // Restore data from storage
+    this.chartGenerator = new MetricsChartGenerator(context);
+
     this.loadPersistedData();
-    
-    // Initialize first session
     this.startSession();
-    
-    // Set up event listeners
     this.initializeTracking();
   }
 
+  /**
+   * Initialize Tracking if
+   * - VScode window is loaded
+   * - The file had changes
+   * or saved the file
+   */
   private initializeTracking() {
-    // Track active text editor changes
-    vscode.window.onDidChangeActiveTextEditor(this.handleEditorChange.bind(this));
-    
-    // Track document changes (more efficient than tracking each keystroke)
-    vscode.workspace.onDidChangeTextDocument(this.handleDocumentChange.bind(this));
-    
-    // Track file save events
-    vscode.workspace.onDidSaveTextDocument(this.handleFileSave.bind(this));
+    this.disposables.push(
+      vscode.window.onDidChangeActiveTextEditor(this.handleEditorChange.bind(this)),
+      vscode.workspace.onDidChangeTextDocument(this.handleDocumentChange.bind(this)),
+      vscode.workspace.onDidSaveTextDocument(this.handleFileSave.bind(this))
+    );
 
-    // Check for idle every minute
+    // Check idle time
     setInterval(() => this.checkIdleTime(), 60 * 1000);
   }
 
+  // Load persisted data
   private loadPersistedData() {
     try {
       const storedMetrics = this.storage.loadMetrics();
-      
-      // Restore tracked files data to cache
-      Object.entries(storedMetrics.fileMetrics).forEach(([filePath, metadata]) => {
-        // Only cache files that still exist and are in the workspace
-        if (vscode.workspace.workspaceFolders) {
-          const workspacePaths = vscode.workspace.workspaceFolders.map(folder => folder.uri.fsPath);
-          const fileStillInWorkspace = workspacePaths.some(wsPath => filePath.startsWith(wsPath));
-          
-          if (fileStillInWorkspace) {
-            this.trackedFiles.set(filePath, metadata);
-          }
+      Object.entries(storedMetrics.fileMetrics).forEach(([path, metadata]) => {
+        if (this.isFileInWorkspace(path)) {
+          this.trackedFiles.set(path, metadata);
         }
       });
     } catch (error) {
-      console.error('Failed to load persisted metrics:', error);
+      console.error('Failed to load metrics:', error);
     }
+  }
+
+  // Helper function that determinates if the file / folder still exists
+  private isFileInWorkspace(filePath: string): boolean {
+    return !!vscode.workspace.workspaceFolders?.some(folder =>
+      filePath.startsWith(folder.uri.fsPath)
+    );
+  }
+
+  // Show productivity Dashboard
+  public showProductivityDashboard(): void {
+    this.generateDailyReport();
+
+    const panel = vscode.window.createWebviewPanel(
+      'productivityDashboard',
+      'Productivity Dashboard',
+      vscode.ViewColumn.One,
+      {
+        enableScripts: true,
+        localResourceRoots: [this.context.extensionUri]
+      }
+    );
+
+    panel.webview.html = this.chartGenerator.generateDashboardHTML();
+  }
+
+  private generateDailyReport(): void {
+    const today = new Date().toISOString().split('T')[0];
+    const sessionInsights = this.getSessionInsights();
+
+    const storedMetrics = this.storage.loadMetrics();
+    let todayMetrics = storedMetrics.dailyMetrics.find(m => m.date === today);
+
+    if (!todayMetrics) {
+      storedMetrics.dailyMetrics.push({
+        date: today,
+        totalCodingTime: sessionInsights.activeTime,
+        filesEdited: sessionInsights.filesTracked,
+        languages: sessionInsights.languageBreakdown
+      });
+    } else {
+      todayMetrics.totalCodingTime += sessionInsights.activeTime;
+      todayMetrics.filesEdited = Math.max(todayMetrics.filesEdited, sessionInsights.filesTracked);
+      Object.entries(sessionInsights.languageBreakdown).forEach(([lang, count]) => {
+        todayMetrics!.languages[lang] = (todayMetrics!.languages[lang] || 0) + count;
+      });
+    }
+
+    this.storage.saveMetrics(storedMetrics);
+    this.startSession();
   }
 
   private handleEditorChange(editor?: vscode.TextEditor) {
     if (!editor || !this.shouldTrackDocument(editor.document)) {
       return;
     }
-    
+
     this.trackFileChange(editor.document.fileName);
   }
 
+  /**
+   * Handles document change events with debounced analysis
+   * @param event - VSCode document change event
+   */
   private handleDocumentChange(event: vscode.TextDocumentChangeEvent) {
     if (!this.shouldTrackDocument(event.document)) {
       return;
@@ -105,19 +177,23 @@ export class MetricsTracker {
 
     // Add to debounced analysis queue
     this.analysisQueue.add(event.document.fileName);
-    
+
     // Debounce the analysis to prevent excessive processing
     if (this.debounceTimeout) {
       clearTimeout(this.debounceTimeout);
     }
-    
+
     this.debounceTimeout = setTimeout(() => {
       this.processAnalysisQueue();
     }, this.DEBOUNCE_DELAY);
-    
+
     this.trackFileChange(event.document.fileName);
   }
 
+  /**
+   * Processes queued files for analysis
+   * Implements parallel-safe processing with error handling
+   */
   private processAnalysisQueue() {
     this.analysisQueue.forEach(async (fileName) => {
       try {
@@ -128,7 +204,7 @@ export class MetricsTracker {
         this.analysisQueue.delete(fileName);
       }
     });
-    
+
     this.analysisQueue.clear();
   }
 
@@ -143,12 +219,12 @@ export class MetricsTracker {
     if (document.uri.scheme !== 'file' || !document.fileName) {
       return false;
     }
-    
+
     const config = this.config.getConfig();
     if (!config.enableMetricTracking) {
       return false;
     }
-    
+
     const fileExtension = path.extname(document.fileName).slice(1).toLowerCase();
     return !config.excludedLanguages.includes(fileExtension);
   }
@@ -182,11 +258,15 @@ export class MetricsTracker {
     }
   }
 
-  // File complexity analysis
+  /**
+   * Performs complexity analysis with mode selection
+   * @param document - Document to analyze
+   * @param isSaved - Flag for full vs light analysis
+   */
   private analyzeDocument(document: vscode.TextDocument, isSaved: boolean = false) {
     try {
       const filePath = document.fileName;
-      
+
       // Skip if we're doing a light analysis and we already have this file cached
       if (!isSaved && this.trackedFiles.get(filePath)) {
         return;
@@ -231,7 +311,7 @@ export class MetricsTracker {
       if (!this.outputChannel) {
         this.outputChannel = vscode.window.createOutputChannel('Code Pulse Insights');
       }
-      
+
       const channel = this.outputChannel;
       channel.clear();
       channel.appendLine(`📄 File Analysis: ${path.basename(file.path)}`);
@@ -253,15 +333,15 @@ export class MetricsTracker {
     try {
       const storedMetrics = this.storage.loadMetrics();
       const updatedFileMetrics = { ...storedMetrics.fileMetrics };
-      
+
       this.trackedFiles.forEach((metadata, path) => {
         updatedFileMetrics[path] = metadata;
       });
-      
+
       // Update daily metrics
       const today = new Date().toISOString().split('T')[0];
       const sessionInsights = this.getSessionInsights();
-      
+
       let todayMetrics = storedMetrics.dailyMetrics.find(m => m.date === today);
       if (!todayMetrics) {
         todayMetrics = {
@@ -275,18 +355,19 @@ export class MetricsTracker {
         // Update existing metrics
         todayMetrics.totalCodingTime += sessionInsights.activeTime;
         todayMetrics.filesEdited = Math.max(todayMetrics.filesEdited, sessionInsights.fileChanges);
-        
+
         // Merge language data
         Object.entries(sessionInsights.languageBreakdown).forEach(([lang, count]) => {
           todayMetrics!.languages[lang] = (todayMetrics!.languages[lang] || 0) + count;
         });
       }
-      
-      this.storage.saveMetrics({ 
-        dailyMetrics: storedMetrics.dailyMetrics, 
-        fileMetrics: updatedFileMetrics 
+
+      this.storage.saveMetrics({
+        dailyMetrics: storedMetrics.dailyMetrics,
+        fileMetrics: updatedFileMetrics,
+        sessions: []
       });
-      
+
       // Reset session after persisting
       this.startSession();
     } catch (error) {
@@ -294,7 +375,10 @@ export class MetricsTracker {
     }
   }
 
-  // Session insights with activity data
+  /**
+   * Calculates session insights with outlier filtering
+   * @returns Current session metrics with statistical normalization
+   */
   public getSessionInsights() {
     try {
       const currentSession = this.sessionsLog[this.sessionsLog.length - 1];
@@ -337,23 +421,29 @@ export class MetricsTracker {
     this.trackedFiles.forEach((file: FileMetadata) => {
       complexities.push(file.complexity.cyclomaticComplexity);
     });
-    
+
     if (complexities.length === 0) {
       return 0;
     }
-    
+
     // Filter out outliers (values more than 2 standard deviations from mean)
     const mean = complexities.reduce((sum, val) => sum + val, 0) / complexities.length;
     const variance = complexities.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / complexities.length;
     const stdDev = Math.sqrt(variance);
     const threshold = stdDev * 2;
-    
-    const filteredComplexities = complexities.filter(val => 
+
+    const filteredComplexities = complexities.filter(val =>
       Math.abs(val - mean) <= threshold
     );
-    
-    return filteredComplexities.length 
+
+    return filteredComplexities.length
       ? filteredComplexities.reduce((a, b) => a + b, 0) / filteredComplexities.length
       : mean;
+  }
+
+  public dispose(): void {
+    this.disposables.forEach(d => d.dispose());
+    this.disposables = [];
+    this.persistMetrics();
   }
 }

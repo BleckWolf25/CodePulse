@@ -1,12 +1,32 @@
-// src/views/charts.ts
+/**
+ * src/views/charts.ts
+ * 
+ * Dashboard Visualization Engine
+ * 
+ * Transforms raw metrics data into interactive Chart.js visualizations
+ * Generates complete dashboard HTML/CSS/JS with responsive design
+ */
+
+// -------------------- IMPORTS -------------------- \\
+
 import * as vscode from 'vscode';
 import { MetricsStorage } from '../metrics/storage';
 import { ComplexityMetrics } from '../metrics/complexity';
+
+// -------------------- INTERFACES -------------------- \\
+
+/**
+ * Represents a single data point for chart visualization
+ */
 
 interface ChartDataPoint {
   label: string;
   value: number;
 }
+
+/**
+ * Chart.js dataset configuration structure
+ */
 
 interface ChartDataset {
   labels: string[];
@@ -20,10 +40,14 @@ interface ChartDataset {
   }>;
 }
 
+// -------------------- MAIN EXPORT -------------------- \\
+
 export class MetricsChartGenerator {
   private storage: MetricsStorage;
+  
+  // Chart color theme configuration
   private readonly CHART_COLORS = [
-    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
     '#9966FF', '#FF9F40', '#66B3FF', '#99FF99'
   ];
 
@@ -32,7 +56,7 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Generates a comprehensive HTML dashboard with Chart.js visualizations
+   * Compiles complete dashboard HTML with embedded visualizations
    */
   public generateDashboardHTML(): string {
     const currentDate = new Date().toLocaleString();
@@ -355,7 +379,7 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Generate insight cards with key metrics
+   * Generates metric summary cards for top-level insights
    */
   private generateInsightCards(): string {
     const metrics = this.storage.loadMetrics();
@@ -400,7 +424,7 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Generate additional focus insights based on metrics
+   * Produces actionable recommendation cards based on current metrics
    */
   private generateFocusInsights(): string {
     const recentActivity = this.getMostRecentActivity();
@@ -441,14 +465,17 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Format large numbers with commas
+   * Formats numeric values with thousands separators
+   * @param num - Number to format
+   * @returns Locale-aware formatted string
    */
   private formatNumber(num: number): string {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   /**
-   * Calculate total lines of code across all files
+   * Calculates total lines of code across all tracked files
+   * @returns Sum of lines from all file metrics
    */
   private calculateTotalLinesOfCode(): number {
     const metrics = this.storage.loadMetrics();
@@ -457,7 +484,8 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Get language count from stored metrics
+   * Analyzes language distribution from metrics
+   * @returns Object with language counts
    */
   private getLanguageCount(): Record<string, number> {
     const metrics = this.storage.loadMetrics();
@@ -473,7 +501,8 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Get the most used programming language
+   * Identifies most frequently used language
+   * @returns Name of top language in uppercase
    */
   private getMostUsedLanguage(): string {
     const languageCount = this.getLanguageCount();
@@ -487,7 +516,8 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Get the most recent active language
+   * Finds most recently modified file's language
+   * @returns Language name or null if no activity
    */
   private getMostRecentActivity(): string | null {
     const metrics = this.storage.loadMetrics();
@@ -511,8 +541,10 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Calculate average complexity of tracked files
+   * Calculates average cyclomatic complexity
+   * @returns Mean complexity score across all files
    */
+
   private calculateAverageComplexity(): number {
     const metrics = this.storage.loadMetrics();
     const complexities = Object.values(metrics.fileMetrics)
@@ -524,7 +556,8 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Calculate average comment ratio as a percentage
+   * Computes average comment ratio percentage
+   * @returns Percentage ratio of comments to code
    */
   private calculateAverageCommentRatio(): number {
     const metrics = this.storage.loadMetrics();
@@ -537,7 +570,8 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Get a description of the complexity trend
+   * Generates human-readable complexity trend description
+   * @returns Textual assessment of complexity trend
    */
   private getComplexityTrend(): string {
     const metrics = this.storage.loadMetrics();
@@ -561,7 +595,7 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Prepare language distribution data for Chart.js
+   * Prepares language distribution data for doughnut chart
    */
   private prepareLanguageDistributionData(): ChartDataset {
     const languageCount = this.getLanguageCount();
@@ -588,9 +622,8 @@ export class MetricsChartGenerator {
       }]
     };
   }
-
   /**
-   * Prepare complexity trend data for Chart.js
+   * Prepares complexity data for bar chart visualization
    */
   private prepareComplexityTrendData(): ChartDataset {
     const metrics = this.storage.loadMetrics();
@@ -616,7 +649,7 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Prepare activity timeline data for Chart.js
+   * Organizes activity data for time-series line chart
    */
   private prepareActivityTimelineData(): ChartDataset {
     const metrics = this.storage.loadMetrics();
@@ -667,7 +700,7 @@ export class MetricsChartGenerator {
       }
     ];
     
-    // Add datasets for top languages
+    // Datasets for top languages
     topLanguages.forEach((lang, index) => {
       datasets.push({
         label: lang.toUpperCase(),
@@ -690,7 +723,7 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Prepare file size distribution data for Chart.js
+   * Structures file size data for polar area chart
    */
   private prepareFileSizeDistributionData(): ChartDataset {
     const metrics = this.storage.loadMetrics();
@@ -726,7 +759,9 @@ export class MetricsChartGenerator {
   }
 
   /**
-   * Get shortened filename for display
+   * Shortens full file paths for display purposes
+   * @param path - Full file system path
+   * @returns Truncated path showing parent directory and filename
    */
   private getShortFileName(path: string): string {
     const parts = path.split(/[\\/]/);

@@ -1,259 +1,161 @@
+/**
+ * src/extension.ts
+ * 
+ * Extension Entry Point
+ * 
+ * Handles extension lifecycle management:
+ * - Activation/Deactivation
+ * - UI Integration (Status Bar)
+ * - Core Component Initialization
+ * - User Onboarding
+ */
+
+// -------------------- IMPORTS -------------------- \\
+
 import * as vscode from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
-import { performance } from 'perf_hooks';
-import { MetricCache } from './utils/cache';
-import { MetricsChartGenerator } from './views/charts';
+import { MetricsTracker } from './metrics/tracker';
+import { ProductivityDashboard } from './views/dashboard';
+import { ConfigExporter } from './utils/config-export';
+import { MetricsStorage } from './metrics/storage';
+import { ConfigManager } from './utils/config';
 
-interface CodeMetrics {
-  totalLines: number;
-  commentRatio: number;
-  complexity: number;
-  languageType: string;
-  fileSize: number;
-  lastModified: Date;
-}
 
-interface DailyMetrics {
-  date: string;
-  totalCodingTime: number;
-  filesEdited: number;
-  languages: Record<string, number>;
-}
+// -------------------- GLOBAL STATE -------------------- \\
 
-class ProductivityTracker {
-  private context: vscode.ExtensionContext;
-  private metrics: DailyMetrics[] = [];
-  private fileMetricsCache = new MetricCache<CodeMetrics>();
-  private startTime: number | null = null;
-  private chartGenerator: MetricsChartGenerator;
-  private disposables: vscode.Disposable[] = [];
+// Singleton metrics tracker instance
+let metricsTracker: MetricsTracker | null = null;
 
-  constructor(context: vscode.ExtensionContext) {
-    this.context = context;
-    this.chartGenerator = new MetricsChartGenerator(context);
-    this.initializeListeners();
-    this.startCodingSession();
-  }
+// -------------------- EXTENSION ACTIVATION -------------------- \\
 
-  private initializeListeners(): void {
-    // Track active text editor changes
-    this.disposables.push(
-      vscode.window.onDidChangeActiveTextEditor(editor => {
-        if (editor) {
-          this.analyzeFile(editor.document);
-        }
-      })
-    );
-
-    // Track file save events
-    this.disposables.push(
-      vscode.workspace.onDidSaveTextDocument(document => {
-        this.analyzeFile(document);
-      })
-    );
-  }
-
-  private startCodingSession(): void {
-    this.startTime = performance.now();
-  }
-
-  private analyzeFile(document: vscode.TextDocument): void {
-    const filePath = document.fileName;
-    
-    // Skip non-file documents
-    if (document.uri.scheme !== 'file') {
-      return;
-    }
-    
-    // Skip already cached files
-    if (this.fileMetricsCache.get(filePath)) { 
-      return;
-    }
-
-    const fileExtension = path.extname(filePath).slice(1).toLowerCase();
-    
-    // Skip files without extensions or non-code files
-    if (!fileExtension || !this.isCodeFile(fileExtension)) {
-      return;
-    }
-
-    const content = document.getText();
-    const lines = content.split('\n');
-    const commentLines = this.countCommentLines(lines, fileExtension);
-
-    const metrics: CodeMetrics = {
-      totalLines: lines.length,
-      commentRatio: lines.length > 0 ? commentLines / lines.length : 0,
-      complexity: this.calculateComplexity(content, fileExtension),
-      languageType: fileExtension,
-      fileSize: Buffer.byteLength(content),
-      lastModified: new Date()
-    };
-
-    // Only try to get file stats if the file actually exists on disk
-    try {
-      const stats = fs.statSync(filePath);
-      metrics.lastModified = new Date(stats.mtime);
-    } catch (error) {
-      // File might be unsaved or inaccessible
-    }
-
-    this.fileMetricsCache.set(filePath, metrics);
-  }
-
-  private isCodeFile(extension: string): boolean {
-    const codeExtensions = [
-      'ts', 'js', 'py', 'java', 'c', 'cpp', 'cs', 'go', 'rb', 
-      'php', 'swift', 'kt', 'dart', 'rs', 'lua', 'html', 'css'
-    ];
-    return codeExtensions.includes(extension);
-  }
-
-  private countCommentLines(lines: string[], fileExtension: string): number {
-    // Simplified pattern matching for comments
-    const commentPatterns: Record<string, RegExp[]> = {
-      default: [/^\s*\/\//, /^\s*\/\*/, /^\s*\*/],
-      py: [/^\s*#/],
-      rb: [/^\s*#/],
-      lua: [/^\s*--/],
-      html: [/^\s*<!--/]
-    };
-
-    const patterns = commentPatterns[fileExtension] || commentPatterns.default;
-    return lines.filter(line => 
-      patterns.some(pattern => pattern.test(line.trim()))
-    ).length;
-  }
-
-  private calculateComplexity(content: string, fileExtension: string): number {
-    // Language-specific complexity calculations
-    const complexityPatterns: Record<string, RegExp[]> = {
-      default: [
-        /\b(if|else|switch|case|for|while|do|catch|try)\b/g,
-        /\&\&|\|\|/g,  // Logical operators
-        /\?.*:/g       // Ternary operators
-      ],
-      py: [
-        /\b(if|elif|else|for|while|try|except|with)\b/g,
-        /\s+and\s+|\s+or\s+/g
-      ],
-      lua: [
-        /\b(if|elseif|else|for|while|repeat|until)\b/g,
-        /\s+and\s+|\s+or\s+/g
-      ]
-    };
-
-    const patterns = complexityPatterns[fileExtension] || complexityPatterns.default;
-    return patterns.reduce((complexity, regex) => {
-      const matches = content.match(regex);
-      return complexity + (matches ? matches.length : 0);
-    }, 0);
-  }
-
-  public generateDailyReport(): void {
-    const today = new Date().toISOString().split('T')[0];
-    const endTime = performance.now();
-    
-    if (!this.startTime) { return; }
-
-    const dailyMetric: DailyMetrics = {
-      date: today,
-      totalCodingTime: (endTime - this.startTime) / 60000, // Convert to minutes
-      filesEdited: this.fileMetricsCache.size,
-      languages: this.aggregateLanguageUsage()
-    };
-
-    this.metrics.push(dailyMetric);
-    this.startCodingSession(); // Reset session
-  }
-
-  private aggregateLanguageUsage(): Record<string, number> {
-    const languageUsage: Record<string, number> = {};
-    
-    this.fileMetricsCache.forEach((metrics) => {
-      if (metrics.languageType) {
-        languageUsage[metrics.languageType] = 
-          (languageUsage[metrics.languageType] || 0) + 1;
-      }
-    });
-
-    return languageUsage;
-  }
-
-  public showProductivityDashboard(): void {
-    // Generate daily report before showing dashboard
-    this.generateDailyReport();
-    
-    const panel = vscode.window.createWebviewPanel(
-      'productivityDashboard',
-      'Productivity Dashboard',
-      vscode.ViewColumn.One,
-      { 
-        enableScripts: true,
-        localResourceRoots: [
-          vscode.Uri.joinPath(this.context.extensionUri, 'media')
-        ]
-      }
-    );
-
-    // Use the chart generator to create the dashboard
-    panel.webview.html = this.chartGenerator.generateDashboardHTML();
-  }
-
-  public dispose(): void {
-    this.disposables.forEach(d => d.dispose());
-    this.disposables = [];
-  }
-}
-
-// Singleton instance
-let productivityTracker: ProductivityTracker | null = null;
-
+/**
+ * Extension activation hook
+ * @param context - VSCode extension context for resource management
+ * @remarks
+ * - Initializes status bar UI
+ * - Creates metrics tracking core
+ * - Registers command handlers
+ * - Shows first-run onboarding
+ */
 export function activate(context: vscode.ExtensionContext): void {
   console.log('🟢 Code Pulse ACTIVATED');
-  
-  // Status bar creation
+
+  // Initialize configuration manager
+  const configManager = ConfigManager.getInstance();
+
+  // Initialize metrics storage
+  const metricsStorage = new MetricsStorage(context);
+
+  // Initialize status bar component
   const statusBar = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right, 
-    1000
+    vscode.StatusBarAlignment.Right, // Position in editor UI
+    1000 // Priority level
   );
   statusBar.text = '$(pulse) Code Pulse';
   statusBar.tooltip = 'Show Developer Productivity Dashboard';
-  statusBar.command = 'codePulse.showDashboard';
+  statusBar.command = 'productivityDashboard.show';
   statusBar.show();
-  
-  // Create the tracker instance
-  productivityTracker = new ProductivityTracker(context);
-  
-  // Register command
-  const showDashboardCommand = vscode.commands.registerCommand(
-    'codePulse.showDashboard', 
-    () => {
-      productivityTracker?.showProductivityDashboard();
-    }
-  );
 
-  // Register disposables
+  // Initialize core analytics engine
+  metricsTracker = new MetricsTracker(context);
+
+  // Initialize dashboard
+  const dashboard = new ProductivityDashboard(context);
+
+  // Initialize config exporter
+  const configExporter = new ConfigExporter();
+
+  // Register dashboard command handler
+  const commandHandlers = [
+    // Show dashboard command
+    vscode.commands.registerCommand('productivityDashboard.show', () => {
+      dashboard.show();
+    }),
+
+    // Export metrics command
+    vscode.commands.registerCommand('productivityDashboard.exportMetrics', () => {
+      dashboard.exportMetrics();
+    }),
+
+    // Export configuration command
+    vscode.commands.registerCommand('productivityDashboard.exportConfig', () => {
+      configExporter.exportConfiguration();
+    }),
+
+    // Clear metrics command (additional useful command)
+    vscode.commands.registerCommand('productivityDashboard.clearMetrics', () => {
+      const config = configManager.getConfig();
+      vscode.window.showWarningMessage(
+        'Are you sure you want to clear all productivity metrics?',
+        'Yes', 'No'
+      ).then(selection => {
+        if (selection === 'Yes') {
+          metricsStorage.saveMetrics({
+            dailyMetrics: [],
+            fileMetrics: {},
+            sessions: []
+          });
+          vscode.window.showInformationMessage('Productivity metrics cleared successfully');
+        }
+      });
+    }),
+
+    // Toggle tracking command (additional useful command)
+    vscode.commands.registerCommand('productivityDashboard.toggleTracking', () => {
+      const config = vscode.workspace.getConfiguration('productivityDashboard');
+      const currentState = config.get<boolean>('enableMetricTracking');
+
+      config.update('enableMetricTracking', !currentState, vscode.ConfigurationTarget.Global)
+        .then(() => {
+          vscode.window.showInformationMessage(
+            `Productivity tracking ${!currentState ? 'enabled' : 'disabled'}`
+          );
+        });
+    })
+  ];
+
+  // Manage extension resources
   context.subscriptions.push(
     statusBar,
-    showDashboardCommand
+    ...commandHandlers
   );
-  
-  // Show first-run notification only on initial install
+
+  // Register data retention job
+  const retentionPeriod = vscode.workspace.getConfiguration('productivityDashboard')
+    .get<number>('retentionPeriod', 90);
+
+  setInterval(() => {
+    metricsStorage.pruneOldMetrics(retentionPeriod);
+  }, 24 * 60 * 60 * 1000); // Check once per day
+
+  // First-run user onboarding
   const hasShownFirstRun = context.globalState.get('codePulse.hasShownFirstRun');
   if (!hasShownFirstRun) {
     vscode.window.showInformationMessage(
-      'Code Pulse activated! Click the $(pulse) icon in the status bar to see your productivity metrics.'
-    );
+      'Code Pulse activated! Click the $(pulse) icon in the status bar to see your productivity metrics.',
+      'Show Dashboard'
+    ).then(selection => {
+      if (selection === 'Show Dashboard') {
+        vscode.commands.executeCommand('productivityDashboard.show');
+      }
+    });
     context.globalState.update('codePulse.hasShownFirstRun', true);
   }
 }
 
+// -------------------- EXTENSION DEACTIVATION -------------------- \\
+
+/**
+ * Extension cleanup handler
+ * @remarks
+ * - Flushes pending metrics to storage
+ * - Releases system resources
+ * - Nullifies tracker reference for GC
+ */
 export function deactivate(): void {
   console.log('🔴 Code Pulse DEACTIVATED');
-  if (productivityTracker) {
-    productivityTracker.dispose();
-    productivityTracker = null;
+  if (metricsTracker) {
+    metricsTracker.persistMetrics(); // Ensure latest metrics are saved
+    metricsTracker.dispose();        // Release resources
+    metricsTracker = null;           // Enable garbage collection
   }
 }

@@ -1,5 +1,22 @@
-// src/metrics/complexity.ts
-import ts from 'typescript';
+/**
+ * src/metrics/complexity.ts
+ * 
+ * Implements multi-tier code complexity analysis:
+ * 1. AST-based analysis for TypeScript/JavaScript
+ * 2. Pattern-based analysis for Python
+ * 3. General heuristic fallback for other languages
+ * 
+ * Core Metrics Calculated:
+ * - Cyclomatic Complexity (control flow complexity)
+ * - Halstead Metrics (code entropy measurements)
+ * - Maintainability Index (code sustainability score)
+ */
+
+// -------------------- IMPORTS -------------------- \\
+
+import ts from '../../node_modules/typescript';
+
+// -------------------- EXPORTS -------------------- \\
 
 export interface ComplexityMetrics {
   totalComplexity: number;
@@ -12,26 +29,41 @@ export interface ComplexityMetrics {
   };
 }
 
+// -------------------- MAIN EXPORT -------------------- \\
+
+/**
+ * Central complexity analysis engine with language-specific handlers
+ * @class
+ */
 export class CodeComplexityAnalyzer {
+
+  // -------------------- PUBLIC METHODS -------------------- \\
+
   /**
-   * Quick analysis for large files during editing
-   * @param sourceCode Source code text
-   * @param _language Language identifier
+   * Lightweight complexity estimation for large files
+   * @param sourceCode - Full text content of the file
+   * @param _language - File language identifier
+   * @returns Approximate complexity metrics
+   * @remarks
+   * - Uses line count heuristics for performance
+   * - Caps complexity at 20 for processing safety
+   * - Recommended for files >500 lines or during editing
    */
   public static quickAnalyze(sourceCode: string, _language: string): ComplexityMetrics {
+
     // Simple line-based complexity estimation
     const lines = sourceCode.split('\n');
     const lineCount = lines.length;
-    
-    // Estimate complexity based on simple heuristics
+
+    // Heuristic: 1 complexity point per 50 lines (min 1, max 20)
     const cyclomaticComplexity = Math.min(
-      20, // Cap complexity for performance reasons
+      20, // Performance cap for large files
       Math.max(
-        1,
-        Math.floor(lineCount / 50) // 1 complexity per 50 lines as a baseline
+        1, // Minimum complexity baseline
+        Math.floor(lineCount / 50)
       )
     );
-    
+
     return {
       totalComplexity: cyclomaticComplexity,
       cyclomaticComplexity,
@@ -45,9 +77,14 @@ export class CodeComplexityAnalyzer {
   }
 
   /**
-   * Calculates comprehensive code complexity metrics
-   * @param sourceCode Full source code as a string
-   * @param language Programming language (for language-specific analysis)
+   * Main complexity analysis entry point
+   * @param sourceCode - Full text content of the file
+   * @param language - Programming language identifier
+   * @returns Language-specific complexity metrics
+   * @remarks
+   * - Attempts AST analysis for supported languages
+   * - Falls back to pattern matching for common languages
+   * - Uses general heuristics as final fallback
    */
   public static analyzeComplexity(sourceCode: string, language: string = 'typescript'): ComplexityMetrics {
     try {
@@ -66,31 +103,47 @@ export class CodeComplexityAnalyzer {
           return this.fallbackComplexityAnalysis(sourceCode);
       }
     } catch (error) {
-      console.error(`Error analyzing complexity: ${error}`);
+      console.error(`Complexity analysis failed: ${error}`);
       return this.fallbackComplexityAnalysis(sourceCode);
     }
   }
 
+  // -------------------- LANGUAGE-SPECIFIC ANALYZERS -------------------- \\
+
   /**
-   * Advanced TypeScript/JavaScript complexity analysis using AST
+   * AST-based analysis for TypeScript/JavaScript
+   * @param sourceCode - TS/JS file content
+   * @returns Precise metrics from AST traversal
+   * @remarks
+   * - Uses TypeScript compiler API
+   * - Traverses AST to count complexity triggers
+   * - Calculates Halstead metrics from operator/operand counts
    */
   private static analyzeTypeScriptComplexity(sourceCode: string): ComplexityMetrics {
     try {
+
+      // Create in-memory AST representation
       const sourceFile = ts.createSourceFile(
-        'temp.ts', 
+        'temp.ts',
         sourceCode,
-        ts.ScriptTarget.Latest, 
+        ts.ScriptTarget.Latest,
         true
       );
-      
-      let cyclomaticComplexity = 1; // Base complexity of 1
-      let halsteadOperators = new Set<string>();
-      let halsteadOperands = new Set<string>();
+
+      // Complexity tracking variables
+      let cyclomaticComplexity = 1; // Base complexity
+      const halsteadOperators = new Set<string>();
+      const halsteadOperands = new Set<string>();
       let operatorCount = 0;
       let operandCount = 0;
 
+      /**
+       * AST traversal function
+       * @param node - Current AST node being processed
+       */
       function traverse(node: ts.Node) {
-        // Complexity increasing constructs
+
+        // Count control flow structures
         switch (node.kind) {
           case ts.SyntaxKind.IfStatement:
           case ts.SyntaxKind.SwitchStatement:
@@ -101,36 +154,40 @@ export class CodeComplexityAnalyzer {
           case ts.SyntaxKind.WhileStatement:
           case ts.SyntaxKind.DoStatement:
           case ts.SyntaxKind.CatchClause:
-          case ts.SyntaxKind.ConditionalExpression: // Ternary
+          case ts.SyntaxKind.ConditionalExpression:
             cyclomaticComplexity++;
             break;
-          
+
           case ts.SyntaxKind.BinaryExpression:
             const binaryExpr = node as ts.BinaryExpression;
-            if ([
-              ts.SyntaxKind.AmpersandAmpersandToken,
-              ts.SyntaxKind.BarBarToken,
-              ts.SyntaxKind.QuestionQuestionToken
-            ].includes(binaryExpr.operatorToken.kind)) {
+
+            // Count logical operators that increase complexity
+            if (
+              [
+                ts.SyntaxKind.AmpersandAmpersandToken,
+                ts.SyntaxKind.BarBarToken,
+                ts.SyntaxKind.QuestionQuestionToken
+              ].includes(binaryExpr.operatorToken.kind)) {
               cyclomaticComplexity++;
             }
-            
-            // Track operator for Halstead metrics
+
+            // Track unique operators for Halstead metrics
             const opText = binaryExpr.operatorToken.getText();
             halsteadOperators.add(opText);
             operatorCount++;
             break;
-            
+
           case ts.SyntaxKind.Identifier:
-            // Track identifiers for Halstead metrics
+            // Track unique identifiers as operands
             halsteadOperands.add((node as ts.Identifier).text);
             operandCount++;
             break;
-            
+
           case ts.SyntaxKind.StringLiteral:
           case ts.SyntaxKind.NumericLiteral:
           case ts.SyntaxKind.TrueKeyword:
           case ts.SyntaxKind.FalseKeyword:
+
             // Track literals as operands
             operandCount++;
             break;
@@ -141,24 +198,25 @@ export class CodeComplexityAnalyzer {
 
       traverse(sourceFile);
 
-      // Cap complexity for extremely complex files to prevent performance issues
+      // Safety cap for extremely complex files
       cyclomaticComplexity = Math.min(cyclomaticComplexity, 100);
-      
-      // Halstead complexity calculations
+
+      // Halstead calculations with fallback values
       const n1 = halsteadOperators.size || 1;
       const n2 = halsteadOperands.size || 1;
       const N1 = operatorCount || 1;
       const N2 = operandCount || 1;
-      
+
+      // Metric formulas
       const halsteadVolume = (N1 + N2) * Math.log2(n1 + n2);
       const halsteadDifficulty = (n1 / 2) * (N2 / n2);
       const halsteadEffort = halsteadDifficulty * halsteadVolume;
 
-      // Maintainability Index calculation (using Microsoft's formula)
+      // Microsoft's maintainability index formula
       const maintainabilityIndex = Math.max(0, Math.min(100,
-        171 - 
-        (5.2 * Math.log(halsteadVolume)) - 
-        (0.23 * cyclomaticComplexity) - 
+        171 -
+        (5.2 * Math.log(halsteadVolume)) -
+        (0.23 * cyclomaticComplexity) -
         (16.2 * Math.log(sourceCode.split('\n').length))
       ));
 
@@ -173,56 +231,51 @@ export class CodeComplexityAnalyzer {
         }
       };
     } catch (error) {
-      console.error('Error in TypeScript complexity analysis, falling back to simple analysis', error);
+      console.error('AST analysis failed, using fallback', error);
       return this.fallbackComplexityAnalysis(sourceCode);
     }
   }
-  
+
   /**
-   * Python complexity analysis
+   * Pattern-based Python complexity analysis
+   * @param sourceCode - Python file content
+   * @returns Metrics from structural pattern matching
+   * @remarks
+   * - Uses regex patterns for control flow detection
+   * - Estimates Halstead metrics from line counts
+   * - Handles Python-specific syntax (list comps, ternaries)
    */
   private static analyzePythonComplexity(sourceCode: string): ComplexityMetrics {
     const lines = sourceCode.split('\n');
-    
     let cyclomaticComplexity = 1; // Base complexity
-    
-    // Count Python control flow structures
+
     for (const line of lines) {
       const trimmedLine = line.trim();
-      
-      // Skip comments and empty lines
-      if (trimmedLine.startsWith('#') || trimmedLine === '') {
-        continue;
-      }
-      
-      // Check for control flow keywords
-      if (/\s*def\s+/.test(trimmedLine)) {
-        cyclomaticComplexity++; // Each function adds complexity
-      }
-      
-      if (/\s*(if|elif|for|while|except)\s+/.test(trimmedLine) || 
-          /\s*return\s+.*\s+if\s+.*\s+else\s+/.test(trimmedLine)) { // Ternary in Python
-        cyclomaticComplexity++;
-      }
-      
-      // Check for logical operators in conditions
-      if (/\s+and\s+|\s+or\s+/.test(trimmedLine)) {
-        // Count each logical operator
-        const andMatches = trimmedLine.match(/\s+and\s+/g) || [];
-        const orMatches = trimmedLine.match(/\s+or\s+/g) || [];
-        cyclomaticComplexity += andMatches.length + orMatches.length;
-      }
+      if (trimmedLine.startsWith('#') || trimmedLine === '') { continue; }
+
+      // Function definition detection
+      if (/\s*def\s+/.test(trimmedLine)) { cyclomaticComplexity++; }
+
+      // Control flow keywords
+      if (/\s*(if|elif|for|while|except)\s+/.test(trimmedLine)) { cyclomaticComplexity++; }
+
+      // Ternary detection
+      if (/\s*return\s+.*\s+if\s+.*\s+else\s+/.test(trimmedLine)) { cyclomaticComplexity++; }
+
+      // Logical operators in conditions
+      const operators = trimmedLine.match(/(\s+and\s+)|(\s+or\s+)/g) || [];
+      cyclomaticComplexity += operators.length;
     }
-    
-    // Simple estimation of Halstead metrics for Python
+
+    // Halstead estimations for Python
     const halsteadVolume = lines.length * Math.log2(cyclomaticComplexity + 1);
     const halsteadDifficulty = cyclomaticComplexity / 2;
-    
-    // Estimate maintainability
+
+    // Maintainability formula for Python
     const maintainabilityIndex = Math.max(0, Math.min(100,
       100 - (cyclomaticComplexity * 0.2) - (0.1 * lines.length)
     ));
-    
+
     return {
       totalComplexity: cyclomaticComplexity,
       cyclomaticComplexity,
@@ -235,47 +288,42 @@ export class CodeComplexityAnalyzer {
     };
   }
 
+  // -------------------- FALLBACK ANALYZERS -------------------- \\
+
   /**
-   * Fallback complexity analysis for unsupported languages
+   * General-purpose complexity heuristics
+   * @param sourceCode - File content for analysis
+   * @returns Conservative complexity estimates
+   * @remarks
+   * - Used for unsupported languages
+   * - Combines line counts and basic pattern matching
+   * - Caps complexity at 50 for safety
    */
   private static fallbackComplexityAnalysis(sourceCode: string): ComplexityMetrics {
     const lines = sourceCode.split('\n');
     const lineCount = lines.length;
-    
-    // Simple complexity heuristics based on line count and control structures
     let cyclomaticComplexity = 1;
-    
-    // Count common control flow patterns across languages
+
     for (const line of lines) {
       const trimmedLine = line.trim();
-      
-      // Skip comments and empty lines
-      if (trimmedLine.startsWith('//') || 
-          trimmedLine.startsWith('#') || 
-          trimmedLine.startsWith('/*') || 
-          trimmedLine.startsWith('*') ||
-          trimmedLine === '') {
-        continue;
-      }
-      
-      // Check for common control flow indicators in most languages
+      if (trimmedLine.startsWith('//') || trimmedLine.startsWith('#') || trimmedLine === '') { continue; }
+
+      // Common control flow patterns
       if (/\b(if|else|switch|case|for|while|do|try|catch|except)\b/.test(trimmedLine)) {
         cyclomaticComplexity++;
       }
-      
-      // Check for logical operators
-      if (/\&\&|\|\||\band\b|\bor\b/.test(trimmedLine)) {
-        const matches = trimmedLine.match(/\&\&|\|\||\band\b|\bor\b/g) || [];
-        cyclomaticComplexity += matches.length;
-      }
+
+      // Logical operator detection
+      const operators = trimmedLine.match(/(\&\&)|(\|\|)|(\band\b)|(\bor\b)/g) || [];
+      cyclomaticComplexity += operators.length;
     }
-    
-    // Cap at a reasonable maximum to prevent performance issues
+
+    // Conservative complexity cap
     cyclomaticComplexity = Math.min(cyclomaticComplexity, 50);
-    
-    // Calculate maintainability inversely related to complexity and line count
+
+    // General maintainability formula
     const maintainabilityIndex = Math.max(0, 100 - (cyclomaticComplexity * 0.25) - (0.05 * lineCount));
-    
+
     return {
       totalComplexity: cyclomaticComplexity,
       cyclomaticComplexity,
@@ -288,40 +336,40 @@ export class CodeComplexityAnalyzer {
     };
   }
 
+  // -------------------- RECOMMENDATION ENGINE -------------------- \\
+
   /**
-   * Generates human-readable complexity recommendations
+   * Generates code quality recommendations
+   * @param metrics - Complexity metrics to evaluate
+   * @returns Prioritized improvement suggestions
+   * @remarks
+   * - Thresholds based on industry standards
+   * - Prioritizes most critical issues first
+   * - Returns positive feedback when metrics are good
    */
   public static getComplexityRecommendations(metrics: ComplexityMetrics): string[] {
     const recommendations: string[] = [];
 
+    // Cyclomatic complexity thresholds
     if (metrics.cyclomaticComplexity > 15) {
-      recommendations.push(
-        "High cyclomatic complexity. Consider refactoring into smaller functions with single responsibilities."
-      );
+      recommendations.push("High cyclomatic complexity. Refactor into smaller functions.");
     } else if (metrics.cyclomaticComplexity > 10) {
-      recommendations.push(
-        "Moderate cyclomatic complexity. Consider simplifying nested conditions with early returns or guard clauses."
-      );
+      recommendations.push("Moderate complexity. Simplify nested conditions.");
     }
 
+    // Maintainability thresholds
     if (metrics.maintainabilityIndex < 40) {
-      recommendations.push(
-        "Low maintainability index. Code may be difficult to maintain. Consider restructuring into smaller modules."
-      );
+      recommendations.push("Low maintainability. Break into smaller modules.");
     } else if (metrics.maintainabilityIndex < 60) {
-      recommendations.push(
-        "Moderate maintainability. Consider adding more documentation and breaking complex logic into named helper functions."
-      );
+      recommendations.push("Moderate maintainability. Improve documentation.");
     }
 
+    // Cognitive complexity thresholds
     if (metrics.halsteadMetrics.difficulty > 30) {
-      recommendations.push(
-        "High cognitive complexity. Look for opportunities to simplify logical expressions or introduce intermediate variables."
-      );
+      recommendations.push("High cognitive complexity. Simplify logic.");
     }
 
-    return recommendations.length ? recommendations : [
-      "Code complexity is within acceptable ranges. Good job!"
-    ];
+    return recommendations.length ? recommendations :
+      ["Code quality metrics are within recommended ranges."];
   }
 }
