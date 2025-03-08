@@ -2,7 +2,7 @@
 
 ---------------------------------------------------------------------------------------
 
-## [1.0.1] - 2025-03-05
+## [1.0.1] - 2025-03-08
 
 ### Added
 
@@ -27,6 +27,8 @@
 - Fixed esbuild issues.
 - Fixed package.json missing peerDependecies.
 - Fixed conflict between config files.
+- Fixed not tracking files.
+- Fixed command not found.
 
 ---------------------------------------------------------------------------------------
 
