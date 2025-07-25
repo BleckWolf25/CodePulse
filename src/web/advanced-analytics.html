@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Analytics - Code Pulse</title>
+    
+    <!-- External Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/variables.css">
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
+    <link rel="stylesheet" href="styles/responsive.css">
+    <link rel="stylesheet" href="styles/accessibility.css">
+    
+    <style>
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .analytics-card {
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+        }
+        
+        .analytics-card h3 {
+            margin: 0 0 1rem 0;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .metric-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .trend-indicator.improving {
+            background: var(--success-background);
+            color: var(--success-color);
+        }
+        
+        .trend-indicator.stable {
+            background: var(--warning-background);
+            color: var(--warning-color);
+        }
+        
+        .trend-indicator.declining {
+            background: var(--error-background);
+            color: var(--error-color);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+        
+        .recommendations-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .recommendation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: var(--background-secondary);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .recommendation-icon {
+            font-size: 1.2rem;
+            margin-top: 0.1rem;
+        }
+        
+        .recommendation-content {
+            flex: 1;
+        }
+        
+        .recommendation-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .recommendation-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .score-circle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .score-excellent { background: var(--success-color); }
+        .score-good { background: var(--primary-color); }
+        .score-fair { background: var(--warning-color); }
+        .score-poor { background: var(--error-color); }
+        
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <h1>Advanced Analytics</h1>
+                <div class="header-actions">
+                    <button id="refreshBtn" class="btn btn-primary">
+                        <span class="loading-spinner" style="display: none;"></span>
+                        Refresh
+                    </button>
+                    <button id="exportBtn" class="btn btn-secondary">Export Report</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Overall Score -->
+            <section class="analytics-card">
+                <h3>Overall Productivity Score</h3>
+                <div style="display: flex; align-items: center; gap: 2rem;">
+                    <div class="score-circle score-good" id="overallScore">85</div>
+                    <div style="flex: 1;">
+                        <div class="metric-row">
+                            <span class="metric-label">Code Quality</span>
+                            <span class="metric-value" data-metric="code-quality-score">--</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Performance</span>
+                            <span class="metric-value" data-metric="performance-score">--</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Team Collaboration</span>
+                            <span class="metric-value" data-metric="team-score">--</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Trends</span>
+                            <span class="metric-value" data-metric="trends-score">--</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Grid -->
+            <div class="analytics-grid">
+                <!-- Trend Analysis -->
+                <div class="analytics-card trends-panel">
+                    <h3>📈 Trend Analysis</h3>
+                    <div class="metric-row">
+                        <span class="metric-label">Velocity Prediction</span>
+                        <span class="metric-value" data-metric="velocity-prediction">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Trend Direction</span>
+                        <span class="trend-indicator stable" data-metric="trend-direction">Stable</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Confidence</span>
+                        <span class="metric-value" data-metric="prediction-confidence">--</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="trendsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Performance Benchmarks -->
+                <div class="analytics-card performance-panel">
+                    <h3>⚡ Performance Benchmarks</h3>
+                    <div class="metric-row">
+                        <span class="metric-label">Execution Hotspots</span>
+                        <span class="metric-value" data-metric="hotspots-count">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Memory Usage</span>
+                        <span class="metric-value" data-metric="memory-usage">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Async Operations</span>
+                        <span class="metric-value" data-metric="async-operations">--</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Team Collaboration -->
+                <div class="analytics-card team-panel">
+                    <h3>👥 Team Collaboration</h3>
+                    <div class="metric-row">
+                        <span class="metric-label">Contributors</span>
+                        <span class="metric-value" data-metric="contributors">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Collaboration Score</span>
+                        <span class="metric-value" data-metric="collaboration-score">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Knowledge Distribution</span>
+                        <span class="metric-value" data-metric="knowledge-distribution">--</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="teamChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Code Health -->
+                <div class="analytics-card code-health-panel">
+                    <h3>🏥 Code Health</h3>
+                    <div class="metric-row">
+                        <span class="metric-label">Code Duplication</span>
+                        <span class="metric-value" data-metric="duplication">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Test Coverage</span>
+                        <span class="metric-value" data-metric="test-coverage">--</span>
+                    </div>
+                    <div class="metric-row">
+                        <span class="metric-label">Documentation</span>
+                        <span class="metric-value" data-metric="documentation-coverage">--</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="codeHealthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <section class="analytics-card">
+                <h3>💡 Actionable Recommendations</h3>
+                <ul class="recommendations-list" id="recommendationsList">
+                    <li class="recommendation-item">
+                        <div class="recommendation-icon">💡</div>
+                        <div class="recommendation-content">
+                            <div class="recommendation-title">Loading recommendations...</div>
+                            <div class="recommendation-description">Please wait while we analyze your code.</div>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/theme-manager.js"></script>
+    <script src="scripts/charts.js"></script>
+    <script src="scripts/websocket-client.js"></script>
+    <script src="scripts/realtime-data.js"></script>
+    <script src="scripts/advanced-analytics.js"></script>
+</body>
+</html>

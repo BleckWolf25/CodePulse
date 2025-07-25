@@ -1,0 +1,865 @@
+/**
+ * CodePulse Dashboard Layout Stylesheet
+ *
+ * This stylesheet provides the complete layout system for the CodePulse dashboard,
+ * creating a professional productivity metrics visualization interface with advanced
+ * interactive features and real-time data presentation. Key features include:
+ *
+ * version 1.0.0
+ *
+ * - Responsive grid-based layout system
+ * - Sticky header with backdrop blur effects
+ * - Interactive chart containers with hover animations
+ * - Real-time data indicators and live updates
+ * - Advanced search functionality with visual feedback
+ * - Theme toggle with smooth transitions
+ * - Insights panel with gradient backgrounds
+ * - Loading states and empty state handling
+ * - Fullscreen chart capabilities
+ * - Keyboard shortcuts integration
+ * - Accessibility-compliant interface elements
+ * - Professional styling with luxury feel
+ */
+
+/* ======================================================================= */
+/* MAIN LAYOUT SYSTEM                                                      */
+/* ======================================================================= */
+
+/**
+ * Dashboard Container
+ * Primary layout structure with flexbox column layout and gradient background
+ * for a modern, professional appearance with full viewport coverage.
+ */
+/* Main dashboard container with gradient background */
+.dashboard {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+}
+
+/* Responsive container with max-width constraint */
+.dashboard-container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  width: 100%;
+}
+
+/* ======================================================================= */
+/* HEADER SYSTEM                                                           */
+/* ======================================================================= */
+
+/**
+ * Dashboard Header
+ * Sticky header with backdrop blur effects, theme-aware transparency,
+ * and professional branding elements with smooth transitions.
+ */
+/* Header container with backdrop blur and transparency */
+.dashboard-header {
+  background: var(--color-bg-elevated);
+  border-bottom: 1px solid var(--color-border-primary);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+/* Dark theme header transparency */
+[data-theme="dark"] .dashboard-header {
+  background: rgba(15, 23, 42, 0.8);
+}
+
+/* Header content layout */
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) 0;
+  min-height: var(--header-height);
+}
+
+/* Header title section with logo and text */
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Gradient logo with brand colors */
+.header-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg);
+}
+
+/* Main header title */
+.header-text h1 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Header subtitle */
+.header-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+/* Header action buttons container */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ======================================================================= */
+/* MAIN CONTENT AREA                                                       */
+/* ======================================================================= */
+
+/**
+ * Dashboard Content
+ * Primary content area with flexible layout and consistent spacing
+ * for optimal content presentation and user experience.
+ */
+
+/* Main content container */
+.dashboard-content {
+  flex: 1;
+  padding: var(--space-8) 0;
+}
+
+/* ======================================================================= */
+/* METRICS GRID SYSTEM                                                     */
+/* ======================================================================= */
+
+/**
+ * Metrics Grid Layout
+ * Responsive grid system for displaying key performance metrics
+ * with adaptive column sizing and consistent spacing.
+ */
+
+/* Primary metrics grid with responsive columns */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-10);
+}
+
+/* Metrics overview grid for summary cards */
+.metrics-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+/* ======================================================================= */
+/* CHARTS SYSTEM                                                           */
+/* ======================================================================= */
+
+/**
+ * Charts Section
+ * Interactive chart visualization system with responsive grid layout,
+ * hover animations, and professional styling for data presentation.
+ */
+
+/* Charts section container */
+.charts-section {
+  margin-bottom: var(--space-10);
+}
+
+/* Charts section header with title and filters */
+.charts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+/* Charts section title */
+.charts-title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+/* Charts filtering controls */
+.charts-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Responsive charts grid layout */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--space-6);
+}
+
+/**
+ * Chart Container
+ * Individual chart containers with elevation effects, hover animations,
+ * and professional styling for enhanced visual appeal.
+ */
+
+/* Chart container with hover effects */
+.chart-container {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-base);
+  transition: all var(--transition-base);
+}
+
+/* Chart container hover state */
+.chart-container:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Chart header with title and actions */
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+/* Chart title styling */
+.chart-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+/* Chart action buttons */
+.chart-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Chart canvas area */
+.chart-canvas {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+/* ======================================================================= */
+/* INSIGHTS PANEL SYSTEM                                                   */
+/* ======================================================================= */
+
+/**
+ * Insights Panel
+ * AI-powered insights display with gradient background, accent border,
+ * and categorized insight items with interactive hover effects.
+ */
+
+/* Insights panel with gradient background */
+.insights-panel {
+  background: linear-gradient(135deg, var(--color-bg-elevated) 0%, var(--color-bg-secondary) 100%);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-lg);
+  margin-bottom: var(--space-8);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gradient accent border at top */
+.insights-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 50%, var(--color-primary) 100%);
+}
+
+/* Insights panel header */
+.insights-header {
+  display: flex;
+  align-items: center;
+  justify-content: between;
+  margin-bottom: var(--space-4);
+}
+
+/* Insights panel title with icon */
+.insights-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Insights list container */
+.insights-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/**
+ * Insight Items
+ * Individual insight cards with categorized icons, hover effects,
+ * and semantic color coding for different insight types.
+ */
+
+/* Individual insight item */
+.insight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+/* Insight item hover effects */
+.insight-item:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-md);
+}
+
+/* Insight icon with semantic colors */
+.insight-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+}
+
+/* Suggestion insight icon */
+.insight-icon.suggestion {
+  background-color: var(--color-info-bg);
+  color: var(--color-info);
+}
+
+/* Warning insight icon */
+.insight-icon.warning {
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+}
+
+/* Success insight icon */
+.insight-icon.success {
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+/* Insight content container */
+.insight-content {
+  flex: 1;
+}
+
+/* Insight title */
+.insight-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+/* Insight description */
+.insight-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+/* ======================================================================= */
+/* FOOTER SYSTEM                                                           */
+/* ======================================================================= */
+
+/**
+ * Dashboard Footer
+ * Sticky footer with system statistics, performance metrics,
+ * and status indicators for comprehensive dashboard information.
+ */
+
+/* Dashboard footer container */
+.dashboard-footer {
+  background: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border-primary);
+  padding: var(--space-4) 0;
+  margin-top: auto;
+}
+
+/* Footer content layout */
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Footer statistics container */
+.footer-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+/* Individual footer statistic */
+.footer-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ======================================================================= */
+/* THEME TOGGLE SYSTEM                                                     */
+/* ======================================================================= */
+
+/**
+ * Theme Toggle
+ * Interactive theme switcher with smooth animations and visual feedback
+ * for seamless light/dark mode transitions.
+ */
+/* Theme toggle button */
+.theme-toggle {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  background: var(--color-border-secondary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color var(--transition-base);
+  border: none;
+  padding: 0;
+}
+
+/* Theme toggle hover state */
+.theme-toggle:hover {
+  background: var(--color-text-tertiary);
+}
+
+/* Theme toggle slider */
+.theme-toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: var(--color-bg-primary);
+  border-radius: 50%;
+  transition: transform var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Dark theme toggle position */
+[data-theme="dark"] .theme-toggle::after {
+  transform: translateX(24px);
+}
+
+/* ======================================================================= */
+/* SEARCH BAR SYSTEM                                                       */
+/* ======================================================================= */
+
+/**
+ * Search Bar
+ * Advanced search interface with icon, focus states, and dropdown results
+ * for enhanced data discovery and navigation.
+ */
+/* Search container with relative positioning */
+.search-container {
+  position: relative;
+  width: 300px;
+}
+
+/* Search input with icon spacing */
+.search-input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-10);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+}
+
+/* Search input focus state */
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Search icon positioning */
+.search-icon {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+/* ===== NOTIFICATION CONTAINER ===== */
+.notification-container {
+  position: fixed;
+  top: var(--space-6);
+  right: var(--space-6);
+  z-index: var(--z-toast);
+  max-width: 400px;
+  width: 100%;
+}
+
+/* ======================================================================= */
+/* LOADING STATES SYSTEM                                                   */
+/* ======================================================================= */
+
+/**
+ * Loading States
+ * Comprehensive loading indicators with skeleton screens, spinners,
+ * and shimmer effects for enhanced user experience during data loading.
+ */
+/**
+ * Loading Overlay
+ * Full-coverage loading overlay with theme-aware transparency
+ * for blocking user interaction during data loading.
+ */
+
+/* Loading overlay with transparency */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  z-index: var(--z-modal);
+}
+
+/* Dark theme loading overlay */
+[data-theme="dark"] .loading-overlay {
+  background: rgba(15, 23, 42, 0.8);
+}
+
+/**
+ * Loading Spinner
+ * Animated spinner with smooth rotation for indicating active loading states.
+ */
+
+/* Loading spinner animation */
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border-primary);
+  border-top: 3px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* ======================================================================= */
+/* EMPTY STATES SYSTEM                                                     */
+/* ======================================================================= */
+
+/**
+ * Empty States
+ * User-friendly empty state displays with helpful messaging and
+ * visual cues for when no data is available.
+ */
+/* Empty state container */
+.empty-state {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  color: var(--color-text-secondary);
+}
+
+/* Empty state icon */
+.empty-state-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto var(--space-4);
+  opacity: 0.5;
+}
+
+/* Empty state title */
+.empty-state-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+/* Empty state description */
+.empty-state-description {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* ======================================================================= */
+/* FULLSCREEN CHART SYSTEM                                                 */
+/* ======================================================================= */
+
+/**
+ * Fullscreen Chart
+ * Modal-style fullscreen chart display with enhanced sizing
+ * and optimized layout for detailed data analysis.
+ */
+/* Fullscreen chart container */
+.chart-container.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-modal);
+  background: var(--color-bg-primary);
+  padding: var(--space-8);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Fullscreen chart canvas sizing */
+.chart-container.fullscreen .chart-canvas {
+  height: calc(100vh - 200px);
+}
+
+/* Fullscreen chart header spacing */
+.chart-container.fullscreen .chart-header {
+  margin-bottom: var(--space-8);
+}
+
+/* Fullscreen chart title sizing */
+.chart-container.fullscreen .chart-title {
+  font-size: var(--font-size-3xl);
+}
+
+/* ======================================================================= */
+/* SEARCH RESULTS SYSTEM                                                   */
+/* ======================================================================= */
+
+/**
+ * Search Results
+ * Visual feedback for search results with animated highlighting
+ * and gradient effects for enhanced user experience.
+ */
+/* Search result highlight container */
+.search-result {
+  position: relative;
+  z-index: 10;
+}
+
+/* Search result animated highlight effect */
+.search-result::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--color-primary), var(--color-accent));
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.1;
+  animation: searchPulse 2s infinite;
+}
+
+/* Search pulse animation keyframes */
+@keyframes searchPulse {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.3; }
+}
+
+/* ======================================================================= */
+/* KEYBOARD SHORTCUTS SYSTEM                                               */
+/* ======================================================================= */
+
+/**
+ * Keyboard Shortcuts
+ * Contextual keyboard shortcut hints with fade animations
+ * and professional styling for enhanced accessibility.
+ */
+/* Keyboard shortcuts hint container */
+.keyboard-shortcuts {
+  position: fixed;
+  bottom: var(--space-4);
+  left: var(--space-4);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  z-index: var(--z-tooltip);
+}
+
+/* Keyboard shortcuts visible state */
+.keyboard-shortcuts.show {
+  opacity: 1;
+}
+
+/* Keyboard shortcut key styling */
+.keyboard-shortcuts kbd {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  margin: 0 var(--space-1);
+}
+
+/* ======================================================================= */
+/* REAL-TIME DATA INDICATORS                                               */
+/* ======================================================================= */
+
+/**
+ * Real-Time Data Indicators
+ * Visual cues for real-time data changes and updates
+ * with animated indicators for optimal user feedback.
+ */
+.change-indicator {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  animation: fadeInOut 2s ease-in-out;
+  z-index: 10;
+}
+
+/* Increase indicators */
+.change-indicator.increase {
+  color: var(--color-success);
+  background-color: var(--color-success-bg);
+}
+
+/* Decrease indicators */
+.change-indicator.decrease {
+  color: var(--color-error);
+  background-color: var(--color-error-bg);
+}
+
+/* Fade in and out animation */
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: scale(0.8); }
+  20% { opacity: 1; transform: scale(1.1); }
+  80% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.9); }
+}
+
+/**
+ * Live Data Indicators
+ * Pulsing indicators for real-time data streams with smooth animations
+ * and visual feedback for active data connections.
+ */
+/* Live data indicator with pulsing dot */
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-success);
+  margin-left: var(--space-2);
+}
+
+/* Pulsing dot for live indicator */
+.live-indicator::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background-color: var(--color-success);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+/* Pulse animation keyframes */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/**
+ * Metric Card Updates
+ * Visual feedback for metric cards during data updates
+ * with border highlights and scaling animations.
+ */
+
+/* Updating metric card highlight */
+.metric-card.updating {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+/* Changing metric value animation */
+.metric-card .metric-value.changing {
+  color: var(--color-primary);
+  transform: scale(1.05);
+  transition: all var(--transition-fast);
+}
+
+/* ======================================================================= */
+/* CHART LOADING STATES                                                    */
+/* ======================================================================= */
+
+/**
+ * Chart Loading States
+ * Shimmer effects and loading animations for chart containers
+ * during data updates and refresh operations.
+ */
+/* Chart shimmer loading effect */
+.chart-container.updating .chart-canvas::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.1), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+/* Shimmer animation keyframes */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Add missing spin animation for loading spinner */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

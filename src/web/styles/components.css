@@ -1,0 +1,592 @@
+/**
+ * CodePulse Component Library
+ *
+ * This stylesheet contains all reusable UI components for the CodePulse application,
+ * designed with a luxury feel and smooth interactions for professional user experience.
+ * Key features include:
+ *
+ * version 1.0.0
+ *
+ * - Button system with multiple variants and states
+ * - Card components with elevation and hover effects
+ * - Metric cards with gradient backgrounds and animations
+ * - Navigation components with active states
+ * - Form elements with focus management
+ * - Badge system for status indication
+ * - Loading spinners and micro-interactions
+ * - Tooltip system for contextual help
+ * - Notification system with animations
+ * - Accessibility-first design approach
+ */
+
+/* ======================================================================= */
+/* BUTTON COMPONENTS                                                        */
+/* ======================================================================= */
+
+/**
+ * Button System
+ * Comprehensive button component with multiple variants, sizes, and states.
+ * Includes gradient backgrounds, smooth transitions, and accessibility features.
+ */
+/* Base button styling */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  border: 1px solid transparent;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Button disabled state */
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Button focus state for accessibility */
+.btn:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/**
+ * Button Variants
+ * Different visual styles for various use cases and hierarchy.
+ */
+/* Primary button with gradient background */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+  color: var(--color-text-inverse);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--color-primary-hover) 0%, var(--color-primary) 100%);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* Secondary button with border styling */
+.btn-secondary {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-bg-tertiary);
+  border-color: var(--color-border-secondary);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* Ghost button with minimal styling */
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-text-secondary);
+}
+
+.btn-ghost:hover {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+}
+
+/**
+ * Button Size Variants
+ * Different button sizes for various contexts and importance levels.
+ */
+/* Small button variant */
+.btn-sm {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--font-size-xs);
+}
+
+/* Large button variant */
+.btn-lg {
+  padding: var(--space-4) var(--space-8);
+  font-size: var(--font-size-base);
+}
+
+/* ======================================================================= */
+/* CARD COMPONENTS                                                          */
+/* ======================================================================= */
+
+/**
+ * Card System
+ * Flexible card components with elevation, hover effects, and structured content areas.
+ * Includes header, body, and footer sections with gradient backgrounds.
+ */
+
+/* Base card styling */
+.card {
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  overflow: hidden;
+}
+
+/* Card hover effects */
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  border-color: var(--color-border-secondary);
+}
+
+/* Card header with gradient background */
+.card-header {
+  padding: var(--space-6);
+  border-bottom: 1px solid var(--color-border-primary);
+  background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-elevated) 100%);
+}
+
+/* Card title styling */
+.card-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+/* Card subtitle styling */
+.card-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Card body content area */
+.card-body {
+  padding: var(--space-6);
+}
+
+/* Card footer with actions */
+.card-footer {
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border-primary);
+  background-color: var(--color-bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ======================================================================= */
+/* METRIC CARD COMPONENTS                                                   */
+/* ======================================================================= */
+
+/**
+ * Metric Cards
+ * Specialized cards for displaying key performance indicators and metrics.
+ * Features gradient backgrounds, accent borders, and animated hover states.
+ */
+/* Metric card with gradient background and accent border */
+.metric-card {
+  background: linear-gradient(135deg, var(--color-bg-elevated) 0%, var(--color-bg-secondary) 100%);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-base);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Accent border at top of metric card */
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+}
+
+/* Metric card hover effects */
+.metric-card:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-4px);
+  border-color: var(--color-primary);
+}
+
+/* Large metric value display */
+.metric-value {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-primary);
+  line-height: 1;
+  margin-bottom: var(--space-2);
+}
+
+/* Metric label styling */
+.metric-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Metric change indicator */
+.metric-change {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+}
+
+/* Positive change styling */
+.metric-change.positive {
+  color: var(--color-success);
+  background-color: var(--color-success-bg);
+}
+
+/* Negative change styling */
+.metric-change.negative {
+  color: var(--color-error);
+  background-color: var(--color-error-bg);
+}
+
+/* ======================================================================= */
+/* NAVIGATION COMPONENTS                                                    */
+/* ======================================================================= */
+
+/**
+ * Navigation System
+ * Flexible navigation components with active states, hover effects,
+ * and accessibility features for keyboard navigation.
+ */
+/* Navigation container */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Individual navigation item */
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-lg);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+/* Navigation item hover state */
+.nav-item:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-secondary);
+}
+
+/* Active navigation item */
+.nav-item.active {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+/* Active indicator line */
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-full);
+}
+
+/* ======================================================================= */
+/* FORM COMPONENTS                                                          */
+/* ======================================================================= */
+
+/**
+ * Form Elements
+ * Comprehensive form styling with focus states, validation,
+ * and accessibility features for optimal user experience.
+ */
+/* Form group container */
+.form-group {
+  margin-bottom: var(--space-6);
+}
+
+/* Form label styling */
+.form-label {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+/* Form input styling */
+.form-input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  transition: all var(--transition-fast);
+}
+
+/* Form input focus state */
+.form-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Form input placeholder styling */
+.form-input::placeholder {
+  color: var(--color-text-muted);
+}
+
+/* ======================================================================= */
+/* BADGE COMPONENTS                                                         */
+/* ======================================================================= */
+
+/**
+ * Badge System
+ * Small status indicators with semantic colors for different states
+ * and contexts throughout the application.
+ */
+/* Base badge styling */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Primary badge variant */
+.badge-primary {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+/* Success badge variant */
+.badge-success {
+  color: var(--color-success);
+  background-color: var(--color-success-bg);
+}
+
+/* Warning badge variant */
+.badge-warning {
+  color: var(--color-warning);
+  background-color: var(--color-warning-bg);
+}
+
+/* Error badge variant */
+.badge-error {
+  color: var(--color-error);
+  background-color: var(--color-error-bg);
+}
+
+/* ======================================================================= */
+/* LOADING COMPONENTS                                                       */
+/* ======================================================================= */
+
+/**
+ * Loading Spinner
+ * Animated loading indicator for asynchronous operations
+ * with smooth rotation animation.
+ */
+/* Spinning loader animation */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border-primary);
+  border-top: 2px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Keyframe animation for spinner rotation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ======================================================================= */
+/* TOOLTIP COMPONENTS                                                       */
+/* ======================================================================= */
+
+/**
+ * Tooltip System
+ * Contextual help tooltips that appear on hover with smooth transitions
+ * and proper positioning relative to trigger elements.
+ */
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip content styling */
+.tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-text-primary);
+  color: var(--color-text-inverse);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+  z-index: var(--z-tooltip);
+  margin-bottom: var(--space-2);
+}
+
+/* Tooltip visibility on hover */
+.tooltip:hover::after {
+  opacity: 1;
+}
+
+/* ======================================================================= */
+/* NOTIFICATION COMPONENTS                                                  */
+/* ======================================================================= */
+
+/**
+ * Notification System
+ * Toast-style notifications with semantic colors, animations,
+ * and proper accessibility features for user feedback.
+ */
+/* Base notification styling */
+.notification {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  margin-bottom: var(--space-3);
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Success notification variant */
+.notification-success {
+  background-color: var(--color-success-bg);
+  border-left: 4px solid var(--color-success);
+}
+
+/* Warning notification variant */
+.notification-warning {
+  background-color: var(--color-warning-bg);
+  border-left: 4px solid var(--color-warning);
+}
+
+/* Error notification variant */
+.notification-error {
+  background-color: var(--color-error-bg);
+  border-left: 4px solid var(--color-error);
+}
+
+/* Info notification variant */
+.notification-info {
+  background-color: var(--color-info-bg);
+  border-left: 4px solid var(--color-info);
+}
+
+/**
+ * Notification Animation
+ * Smooth slide-in animation for notification appearance
+ * with opacity transition for professional feel.
+ */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* ======================================================================= */
+/* THEME TOGGLE COMPONENT                                                  */
+/* ======================================================================= */
+
+/**
+ * Theme Toggle Button
+ * Specialized button for switching between light and dark themes
+ * with smooth icon transitions and accessibility features.
+ */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-toggle:hover {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.theme-toggle:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-xs);
+}
+
+.theme-toggle:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}
+
+.theme-toggle .theme-icon {
+  font-size: 18px;
+  transition: transform var(--transition-fast);
+}
+
+.theme-toggle:hover .theme-icon {
+  transform: scale(1.1);
+}

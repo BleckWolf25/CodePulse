@@ -2,6 +2,63 @@
 
 ---------------------------------------------------------------------------------------
 
+## [1.0.3] - 2025-04-25
+
+### Added
+
+- Implemented worker thread pool for parallel processing
+- Added IndexedDB support for large datasets
+- Enhanced cache compression with metrics
+- Added OS-aware CPU core detection
+- Implemented progressive enhancement for worker threads
+- Implemented more analyzers
+
+### Changed
+
+- Improved worker thread management system
+- Enhanced cache compression efficiency
+- Updated memory management for large files
+- Optimized thread pool resource usage
+- Changed project structure
+- Made Code Pulse twice faster on the startup and showing the Dashboard
+- Changed extension logo
+- Made the project more modular
+
+### Fixed
+
+- Comment Ratio too high
+- Code Complexity Trend file names instead of full path
+- Fixed cache compression error handling
+- Improved worker message type safety
+
+---------------------------------------------------------------------------------------
+
+## [1.0.2] - 2025-03-29
+
+### Added
+
+- Restored and enhanced test framework
+- Worker thread implementation for heavy computations
+- Performance optimization for large codebases
+
+### Changed
+
+- Improved error handling system
+- Enhanced cache compression
+- Updated visualization components
+
+### Removed
+
+- 
+
+### Fixed
+
+- Test suite restoration
+- Worker thread stability
+- Cache system performance
+
+---------------------------------------------------------------------------------------
+
 ## [1.0.1] - 2025-03-08
 
 ### Added

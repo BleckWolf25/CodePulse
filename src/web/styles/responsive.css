@@ -1,0 +1,540 @@
+/**
+ * CodePulse Responsive Stylesheet
+ *
+ * This stylesheet implements a comprehensive responsive design system using
+ * a mobile-first approach to ensure optimal user experience across all devices.
+ * Key features include:
+ *
+ * version 1.0.0
+ *
+ * - Mobile-first responsive breakpoints (640px, 768px, 1024px, 1280px, 1536px)
+ * - Flexible grid systems for metrics and charts
+ * - Adaptive typography and spacing
+ * - Touch-friendly interface optimizations
+ * - Print-specific styling
+ * - High DPI display support
+ * - Landscape orientation handling
+ * - Container query future-proofing
+ * - Accessibility-aware responsive features
+ */
+
+/* ======================================================================= */
+/* MOBILE FIRST BASE STYLES                                                */
+/* ======================================================================= */
+
+/**
+ * Base Mobile Styles
+ * These styles apply to all screen sizes by default, establishing
+ * the foundation for mobile-first responsive design.
+ */
+
+/* Dashboard container with mobile padding */
+.dashboard-container {
+  padding: 0 var(--space-4);
+}
+
+/* Header content stacked vertically on mobile */
+.header-content {
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+}
+
+/* Header actions full width on mobile */
+.header-actions {
+  width: 100%;
+  justify-content: space-between;
+}
+
+/* Search container full width on mobile */
+.search-container {
+  width: 100%;
+  max-width: none;
+}
+
+/* Single column metrics grid for mobile */
+.metrics-grid {
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+/* Two column metrics overview for mobile */
+.metrics-overview {
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+/* Single column charts grid for mobile */
+.charts-grid {
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+/* Charts header stacked vertically on mobile */
+.charts-header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+}
+
+/* Charts filters full width on mobile */
+.charts-filters {
+  width: 100%;
+  justify-content: space-between;
+}
+
+/* Footer content stacked and centered on mobile */
+.footer-content {
+  flex-direction: column;
+  gap: var(--space-3);
+  text-align: center;
+}
+
+/* Footer stats centered on mobile */
+.footer-stats {
+  justify-content: center;
+  gap: var(--space-4);
+}
+
+/* Insight items stacked and centered on mobile */
+.insight-item {
+  flex-direction: column;
+  text-align: center;
+}
+
+/* Notifications full width on mobile */
+.notification-container {
+  top: var(--space-4);
+  right: var(--space-4);
+  left: var(--space-4);
+  max-width: none;
+}
+
+/* ======================================================================= */
+/* SMALL SCREENS (640px and up)                                            */
+/* ======================================================================= */
+
+/**
+ * Small Screen Breakpoint
+ * First responsive breakpoint that begins to optimize layout
+ * for slightly larger screens while maintaining mobile-friendly design.
+ */
+@media (min-width: 640px) {
+  /* Increased padding for small screens */
+  .dashboard-container {
+    padding: 0 var(--space-6);
+  }
+
+  /* Three column metrics overview */
+  .metrics-overview {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Horizontal charts header layout */
+  .charts-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  /* Horizontal footer layout */
+  .footer-content {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  /* Horizontal insight item layout */
+  .insight-item {
+    flex-direction: row;
+    text-align: left;
+  }
+
+  /* Fixed width search container */
+  .search-container {
+    width: 250px;
+  }
+
+  /* Positioned notifications */
+  .notification-container {
+    left: auto;
+    max-width: 400px;
+  }
+}
+
+/* ======================================================================= */
+/* MEDIUM SCREENS (768px and up)                                           */
+/* ======================================================================= */
+
+/**
+ * Medium Screen Breakpoint
+ * Tablet-optimized layout with improved grid systems and
+ * spacing for better content organization.
+ */
+@media (min-width: 768px) {
+  /* Horizontal header layout */
+  .header-content {
+    flex-direction: row;
+    padding: var(--space-4) 0;
+  }
+
+  /* Auto-width header actions */
+  .header-actions {
+    width: auto;
+  }
+
+  /* Two column metrics grid */
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
+
+  /* Four column metrics overview */
+  .metrics-overview {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Two column charts grid */
+  .charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
+
+  /* Wider search container */
+  .search-container {
+    width: 300px;
+  }
+
+  /* Increased dashboard content padding */
+  .dashboard-content {
+    padding: var(--space-8) 0;
+  }
+
+  /* Chart specific responsive adjustments */
+  .chart-canvas {
+    height: 350px;
+  }
+
+  /* Improved spacing for larger screens */
+  .card-header,
+  .card-body {
+    padding: var(--space-6);
+  }
+
+  /* Metric card padding */
+  .metric-card {
+    padding: var(--space-8);
+  }
+}
+
+/* ======================================================================= */
+/* LARGE SCREENS (1024px and up)                                           */
+/* ======================================================================= */
+
+/**
+ * Large Screen Breakpoint
+ * Desktop-optimized layout with grid systems,
+ * hover effects, and improved spacing for desktop interaction.
+ */
+@media (min-width: 1024px) {
+  /* Three column metrics grid */
+  .metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Two column charts grid maintained */
+  .charts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Increased dashboard content padding */
+  .dashboard-content {
+    padding: var(--space-10) 0;
+  }
+
+  /* Hover effects for larger screens */
+  .metric-card:hover {
+    transform: translateY(-6px);
+  }
+
+  .chart-container:hover {
+    transform: translateY(-4px);
+  }
+
+  /* Better spacing for insights */
+  .insights-panel {
+    padding: var(--space-8);
+  }
+
+  .insight-item {
+    padding: var(--space-6);
+  }
+}
+
+/* ======================================================================= */
+/* EXTRA LARGE SCREENS (1280px and up)                                     */
+/* ======================================================================= */
+
+/**
+ * Extra Large Screen Breakpoint
+ * Wide desktop layout with maximum grid utilization
+ * and optimized chart sizing for large displays.
+ */
+@media (min-width: 1280px) {
+  /* Four column metrics grid */
+  .metrics-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  /* Three column charts grid */
+  .charts-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Increased chart height */
+  .chart-canvas {
+    height: 400px;
+  }
+
+  /* Maximum container width constraint */
+  .dashboard-container {
+    max-width: var(--container-max-width);
+  }
+}
+
+/* ======================================================================= */
+/* 2XL SCREENS (1536px and up)                                             */
+/* ======================================================================= */
+
+/**
+ * 2XL Screen Breakpoint
+ * Ultra-wide desktop layout with maximum spacing
+ * and optimized content distribution for very large displays.
+ */
+@media (min-width: 1536px) {
+  /* Three column charts grid maintained */
+  .charts-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Spacing for very large screens */
+  .dashboard-content {
+    padding: var(--space-12) 0;
+  }
+
+  /* Increased grid gaps */
+  .metrics-grid,
+  .charts-grid {
+    gap: var(--space-8);
+  }
+}
+
+/* ======================================================================= */
+/* LANDSCAPE ORIENTATION                                                   */
+/* ======================================================================= */
+
+/**
+ * Landscape Orientation Optimization
+ * Adjustments for landscape mode on mobile devices and tablets
+ * to maximize vertical space utilization.
+ */
+@media (orientation: landscape) and (max-height: 600px) {
+  /* Reduced padding for landscape mode */
+  .dashboard-content {
+    padding: var(--space-4) 0;
+  }
+
+  /* Tighter grid gaps */
+  .metrics-grid,
+  .charts-grid {
+    gap: var(--space-4);
+  }
+
+  /* Reduced chart height for landscape */
+  .chart-canvas {
+    height: 250px;
+  }
+
+  /* Compact header padding */
+  .header-content {
+    padding: var(--space-3) 0;
+  }
+}
+
+/* ======================================================================= */
+/* HIGH DPI DISPLAYS                                                       */
+/* ======================================================================= */
+
+/**
+ * High DPI Display Optimization
+ * Ensures crisp rendering on high-resolution displays
+ * by optimizing image rendering algorithms.
+ */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Crisp image rendering for high DPI */
+  .header-logo,
+  .insight-icon {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* ======================================================================= */
+/* PRINT STYLES                                                            */
+/* ======================================================================= */
+
+/**
+ * Print Optimization
+ * Specialized styling for print media with simplified layouts,
+ * removed interactive elements, and optimized spacing.
+ */
+@media print {
+  /* High contrast print colors */
+  .dashboard {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Hide interactive elements in print */
+  .header-actions,
+  .charts-filters,
+  .btn,
+  .theme-toggle {
+    display: none !important;
+  }
+
+  /* Simplified card styling for print */
+  .card,
+  .metric-card,
+  .chart-container {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+  }
+
+  /* Remove padding for print layout */
+  .dashboard-content {
+    padding: 0 !important;
+  }
+
+  /* Compact grid spacing for print */
+  .charts-grid,
+  .metrics-grid {
+    gap: var(--space-4) !important;
+  }
+}
+
+/* ======================================================================= */
+/* REDUCED MOTION                                                          */
+/* ======================================================================= */
+
+/**
+ * Reduced Motion Support
+ * Disables animations and transitions for users who prefer
+ * reduced motion to prevent vestibular disorders.
+ */
+@media (prefers-reduced-motion: reduce) {
+  /* Remove hover transforms */
+  .metric-card:hover,
+  .chart-container:hover,
+  .card:hover {
+    transform: none !important;
+  }
+
+  /* Disable loading animations */
+  .loading-spinner {
+    animation: none !important;
+  }
+
+  /* Disable notification animations */
+  .notification {
+    animation: none !important;
+  }
+}
+
+/* ======================================================================= */
+/* TOUCH DEVICES                                                           */
+/* ======================================================================= */
+
+/**
+ * Touch Device Optimization
+ * Touch interaction with larger touch targets,
+ * improved scrolling, and disabled hover effects.
+ */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase touch targets for mobile devices */
+  .btn {
+    min-height: 44px;
+    padding: var(--space-3) var(--space-6);
+  }
+
+  .nav-item {
+    min-height: 44px;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .theme-toggle {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Remove hover effects on touch devices */
+  .metric-card:hover,
+  .chart-container:hover,
+  .card:hover,
+  .btn:hover {
+    transform: none;
+    box-shadow: var(--shadow-base);
+  }
+
+  /* Improve touch scrolling performance */
+  .dashboard {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ======================================================================= */
+/* ACCESSIBILITY PREFERENCES                                               */
+/* ======================================================================= */
+
+/**
+ * High Contrast Mode
+ * Automatically adjusts colors for users who prefer
+ * high contrast for better readability.
+ */
+@media (prefers-contrast: high) {
+  /* Light theme high contrast */
+  :root {
+    --color-border-primary: #000000;
+    --color-border-secondary: #333333;
+    --color-text-secondary: #000000;
+  }
+
+  /* Dark theme high contrast */
+  [data-theme="dark"] {
+    --color-border-primary: #ffffff;
+    --color-border-secondary: #cccccc;
+    --color-text-secondary: #ffffff;
+  }
+}
+
+/* ======================================================================= */
+/* CONTAINER QUERIES (Future-proofing)                                     */
+/* ======================================================================= */
+
+/**
+ * Container Query Support
+ * Future-proofing with container queries for more granular
+ * responsive design when browser support improves.
+ */
+@supports (container-type: inline-size) {
+  /* Enable container queries for chart containers */
+  .chart-container {
+    container-type: inline-size;
+  }
+
+  /* Responsive chart sizing based on container */
+  @container (max-width: 400px) {
+    .chart-canvas {
+      height: 200px;
+    }
+  }
+}

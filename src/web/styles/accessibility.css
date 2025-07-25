@@ -1,0 +1,504 @@
+/**
+ * CodePulse Accessibility Stylesheet
+ * 
+ * This stylesheet implements comprehensive accessibility features to ensure the application
+ * is usable by people with various disabilities and preferences. Key features include:
+ *
+ * version 1.0.0
+ *
+ * - Color blindness support (Protanopia, Deuteranopia, Tritanopia)
+ * - Focus management for keyboard navigation
+ * - Screen reader optimizations and ARIA support
+ * - High contrast mode for low vision users
+ * - Reduced motion options for vestibular disorders
+ * - Flexible font sizing
+ * - Skip links for keyboard users
+ * - ARIA live regions for dynamic content
+ */
+
+/* ======================================================================= */
+/* COLOR BLINDNESS SUPPORT                                                 */
+/* ======================================================================= */
+
+/**
+ * SVG Filters for Color Vision Deficiency Simulation
+ * These filters modify the color spectrum to accommodate different types of
+ * color blindness, ensuring content remains distinguishable.
+ */
+.accessibility-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* Protanopia - Reduced sensitivity to red light */
+.protanopia-filter {
+  filter: url('#protanopia-filter');
+}
+
+/* Deuteranopia - Reduced sensitivity to green light */
+.deuteranopia-filter {
+  filter: url('#deuteranopia-filter');
+}
+
+/* Tritanopia - Reduced sensitivity to blue light */
+.tritanopia-filter {
+  filter: url('#tritanopia-filter');
+}
+
+/* ======================================================================= */
+/* FOCUS MANAGEMENT                                                        */
+/* ======================================================================= */
+
+/**
+ * Focus Indicators
+ * Provides clear visual feedback for keyboard navigation with high contrast
+ * outlines and subtle animations for better user experience.
+ */
+.style-focus *:focus,
+.style-focus *:focus-visible {
+  outline: 3px solid var(--color-primary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 
+    0 0 0 1px var(--color-bg-primary),
+    0 0 0 4px var(--color-primary),
+    0 0 8px rgba(37, 99, 235, 0.3) !important;
+  border-radius: var(--radius-base);
+  position: relative;
+  z-index: 10;
+}
+
+/* Interactive Elements Focus States */
+.style-focus button:focus,
+.style-focus a:focus,
+.style-focus input:focus,
+.style-focus select:focus,
+.style-focus textarea:focus,
+.style-focus [tabindex]:focus {
+  background-color: var(--color-primary-light) !important;
+  transform: scale(1.02);
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+/* Container Focus States */
+.style-focus .card:focus-within,
+.style-focus .metric-card:focus-within {
+  box-shadow: 0 0 0 2px var(--color-primary);
+  transform: translateY(-2px);
+}
+
+/* ======================================================================= */
+/* SCREEN READER OPTIMIZATIONS                                             */
+/* ======================================================================= */
+
+/**
+ * Screen Reader Only Content
+ * Hides content visually while keeping it accessible to screen readers.
+ * Implementation follows WebAIM's recommendations for invisible content.
+ */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Focused Screen Reader Content */
+.sr-only:focus {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0.5rem !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: normal !important;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-base);
+  z-index: var(--z-tooltip);
+}
+
+/**
+ * Screen Reader Mode
+ * Text presentation and additional descriptions for
+ * complex visual elements like charts and graphs.
+ */
+.screen-reader-mode {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.screen-reader-mode .chart-container {
+  position: relative;
+}
+
+.screen-reader-mode .chart-container::after {
+  content: attr(data-chart-description);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-base);
+  margin-top: 0.5rem;
+}
+
+/* ======================================================================= */
+/* SKIP NAVIGATION                                                         */
+/* ======================================================================= */
+
+/**
+ * Skip Links
+ * Allows keyboard users to bypass repetitive navigation
+ * and jump directly to main content areas.
+ */
+.skip-links {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  right: 0;
+  z-index: var(--z-tooltip);
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0.5rem;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border-radius: var(--radius-base);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  transition: top var(--transition-fast);
+  z-index: var(--z-tooltip);
+}
+
+.skip-link:focus {
+  top: 0.5rem;
+  position: fixed;
+}
+
+.skip-link:hover {
+  background: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+/* ======================================================================= */
+/* HIGH CONTRAST MODE                                                      */
+/* ======================================================================= */
+
+/**
+ * High Contrast Theme
+ * Maximizes color contrast for better readability.
+ * Includes both light and dark variants.
+ */
+.high-contrast {
+  --color-primary: #0066cc;
+  --color-primary-hover: #004499;
+  --color-primary-light: #e6f3ff;
+  --color-secondary: #333333;
+  --color-accent: #7c3aed;
+  --color-accent-hover: #5b21b6;
+  
+  /* Border contrast */
+  --color-border-primary: #000000;
+  --color-border-secondary: #666666;
+  
+  /* Maximum contrast backgrounds */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-tertiary: #e0e0e0;
+  --color-bg-elevated: #ffffff;
+  
+  /* High contrast text colors */
+  --color-text-primary: #000000;
+  --color-text-secondary: #333333;
+  --color-text-tertiary: #666666;
+  --color-text-inverse: #ffffff;
+  
+  /* Shadows for depth */
+  --shadow-base: 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 16px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Dark theme high contrast variant */
+[data-theme="dark"].high-contrast {
+  --color-primary: #66b3ff;
+  --color-primary-hover: #3399ff;
+  --color-primary-light: #1a365d;
+  
+  --color-border-primary: #ffffff;
+  --color-border-secondary: #cccccc;
+  
+  --color-bg-primary: #000000;
+  --color-bg-secondary: #1a1a1a;
+  --color-bg-tertiary: #333333;
+  --color-bg-elevated: #000000;
+  
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #cccccc;
+  --color-text-tertiary: #999999;
+  --color-text-inverse: #000000;
+}
+
+/* High contrast specific */
+.high-contrast * {
+  border-width: 2px !important;
+}
+
+.high-contrast button,
+.high-contrast .btn {
+  border: 2px solid var(--color-border-primary) !important;
+  font-weight: var(--font-weight-bold);
+}
+
+.high-contrast .card,
+.high-contrast .metric-card {
+  border: 2px solid var(--color-border-primary) !important;
+  box-shadow: var(--shadow-md);
+}
+
+/* ======================================================================= */
+/* REDUCED MOTION                                                          */
+/* ======================================================================= */
+
+/**
+ * Reduced Motion Mode
+ * Minimizes or eliminates animations and transitions for users
+ * who experience motion sickness or vestibular disorders.
+ */
+.reduced-motion,
+.reduced-motion *,
+.reduced-motion *::before,
+.reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+.reduced-motion .chart-container canvas {
+  animation: none !important;
+}
+
+.reduced-motion .loading-spinner {
+  animation: none !important;
+}
+
+.reduced-motion .fade-in,
+.reduced-motion .slide-in,
+.reduced-motion .scale-in {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ======================================================================= */
+/* FONT SIZE VARIATIONS                                                    */
+/* ======================================================================= */
+
+/**
+ * Configurable Font Sizes
+ * Provides multiple text size options to accommodate
+ * different visual needs and preferences.
+ */
+[data-font-size="small"] {
+  --font-size-xs: 0.625rem;
+  --font-size-sm: 0.75rem;
+  --font-size-base: 0.875rem;
+  --font-size-lg: 1rem;
+  --font-size-xl: 1.125rem;
+  --font-size-2xl: 1.25rem;
+  --font-size-3xl: 1.5rem;
+  --font-size-4xl: 1.875rem;
+}
+
+[data-font-size="large"] {
+  --font-size-xs: 0.875rem;
+  --font-size-sm: 1rem;
+  --font-size-base: 1.125rem;
+  --font-size-lg: 1.25rem;
+  --font-size-xl: 1.375rem;
+  --font-size-2xl: 1.625rem;
+  --font-size-3xl: 2rem;
+  --font-size-4xl: 2.5rem;
+}
+
+[data-font-size="extra-large"] {
+  --font-size-xs: 1rem;
+  --font-size-sm: 1.125rem;
+  --font-size-base: 1.25rem;
+  --font-size-lg: 1.375rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 1.75rem;
+  --font-size-3xl: 2.25rem;
+  --font-size-4xl: 2.75rem;
+}
+
+/* ======================================================================= */
+/* KEYBOARD NAVIGATION                                                     */
+/* ======================================================================= */
+
+/**
+ * Keyboard Navigation
+ * Improves keyboard accessibility with clear focus indicators
+ * and proper focus management for modals and interactive elements.
+ */
+.js-focus-visible :focus:not(.focus-visible) {
+  outline: none;
+}
+
+.js-focus-visible .focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Tab navigation improvements */
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
+/* ======================================================================= */
+/* MODAL ACCESSIBILITY                                                     */
+/* ======================================================================= */
+
+/* Modal focus management */
+.modal-open {
+  overflow: hidden;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: var(--z-modal-backdrop);
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  z-index: var(--z-modal);
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+/* ======================================================================= */
+/* ARIA LIVE REGIONS                                                       */
+/* ======================================================================= */
+
+/**
+ * ARIA Live Regions
+ * Enables screen readers to announce dynamic content changes
+ * without losing their current focus position.
+ */
+.sr-live-region {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ======================================================================= */
+/* ACCESSIBILITY CONTROLS                                                  */
+/* ======================================================================= */
+
+/**
+ * Accessibility Control Panel
+ * Provides user interface for toggling various accessibility
+ * features and preferences.
+ */
+.accessibility-controls {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-popover);
+  max-width: 300px;
+}
+
+.accessibility-controls.hidden {
+  transform: translateX(calc(100% + 1rem));
+  transition: transform var(--transition-base);
+}
+
+.accessibility-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.accessibility-control:last-child {
+  border-bottom: none;
+}
+
+.accessibility-control label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+/* Toggle switch styling */
+.accessibility-toggle {
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-full);
+  width: 3rem;
+  height: 1.5rem;
+  position: relative;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.accessibility-toggle.active {
+  background: var(--color-primary);
+}
+
+.accessibility-toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: white;
+  border-radius: 50%;
+  transition: transform var(--transition-fast);
+}
+
+.accessibility-toggle.active::after {
+  transform: translateX(1.5rem);
+}

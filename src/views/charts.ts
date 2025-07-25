@@ -548,10 +548,11 @@ export class MetricsChartGenerator {
   private calculateAverageComplexity(): number {
     const metrics = this.storage.loadMetrics();
     const complexities = Object.values(metrics.fileMetrics)
+      .filter(file => file && file.complexity && typeof file.complexity.cyclomaticComplexity === 'number')
       .map(file => file.complexity.cyclomaticComplexity);
 
-    return complexities.length 
-      ? complexities.reduce((a, b) => a + b, 0) / complexities.length 
+    return complexities.length
+      ? complexities.reduce((a, b) => a + b, 0) / complexities.length
       : 0;
   }
 
@@ -627,10 +628,11 @@ export class MetricsChartGenerator {
    */
   private prepareComplexityTrendData(): ChartDataset {
     const metrics = this.storage.loadMetrics();
-    
+
     const complexityTrend = Object.values(metrics.fileMetrics)
+      .filter(file => file && file.complexity && typeof file.complexity.cyclomaticComplexity === 'number')
       .map(file => ({
-        label: this.getShortFileName(file.path), 
+        label: this.getShortFileName(file.path),
         value: file.complexity.cyclomaticComplexity
       }))
       .sort((a, b) => b.value - a.value)

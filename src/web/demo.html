@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CodePulse - Design System Demo</title>
+  
+  <!-- External Dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Styles -->
+  <link rel="stylesheet" href="styles/variables.css">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/dashboard.css">
+  <link rel="stylesheet" href="styles/responsive.css">
+  <link rel="stylesheet" href="styles/accessibility.css">
+  <link rel="stylesheet" href="styles/interactive-features.css">
+  
+  <style>
+    /* Demo-specific styles */
+    .demo-section {
+      margin: var(--space-8) 0;
+      padding: var(--space-6);
+      border: 1px solid var(--color-border-primary);
+      border-radius: var(--radius-lg);
+      background: var(--color-bg-secondary);
+    }
+    
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+    }
+    
+    .color-palette {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: var(--space-3);
+    }
+    
+    .color-swatch {
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      text-align: center;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+    }
+    
+    .typography-showcase h1,
+    .typography-showcase h2,
+    .typography-showcase h3,
+    .typography-showcase h4,
+    .typography-showcase h5,
+    .typography-showcase h6 {
+      margin-bottom: var(--space-2);
+    }
+    
+    .component-showcase {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Skip Links -->
+  <div class="skip-links">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+  </div>
+
+  <div class="dashboard">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="dashboard-container">
+        <div class="header-content">
+          <div class="header-title">
+            <div class="header-logo">CP</div>
+            <div class="header-text">
+              <h1>CodePulse Design System</h1>
+              <p class="header-subtitle">Component Library & Style Guide Demo</p>
+            </div>
+          </div>
+          
+          <div class="header-actions">
+            <button class="theme-toggle" title="Toggle Theme" aria-label="Toggle theme">
+              <span class="theme-icon" aria-hidden="true">🌙</span>
+            </button>
+            
+            <button class="accessibility-menu-toggle" title="Accessibility Options" aria-label="Open accessibility options">
+              <span aria-hidden="true">♿</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-content" id="main-content" role="main">
+      <div class="dashboard-container">
+        
+        <!-- Typography Section -->
+        <section class="demo-section">
+          <h2>Typography System</h2>
+          <div class="typography-showcase">
+            <h1>Heading 1 - Page Title</h1>
+            <h2>Heading 2 - Section Title</h2>
+            <h3>Heading 3 - Subsection Title</h3>
+            <h4>Heading 4 - Component Title</h4>
+            <h5>Heading 5 - Card Title</h5>
+            <h6>Heading 6 - Label</h6>
+            <p>This is a paragraph with regular text. It demonstrates the base typography styling with proper line height and color contrast for optimal readability.</p>
+            <p><code>inline code example</code> and <a href="#">link styling</a></p>
+          </div>
+        </section>
+
+        <!-- Color Palette Section -->
+        <section class="demo-section">
+          <h2>Color Palette</h2>
+          <div class="color-palette">
+            <div class="color-swatch" style="background: var(--color-primary); color: white;">Primary</div>
+            <div class="color-swatch" style="background: var(--color-secondary); color: white;">Secondary</div>
+            <div class="color-swatch" style="background: var(--color-success); color: white;">Success</div>
+            <div class="color-swatch" style="background: var(--color-warning); color: black;">Warning</div>
+            <div class="color-swatch" style="background: var(--color-error); color: white;">Error</div>
+            <div class="color-swatch" style="background: var(--color-bg-primary); color: var(--color-text-primary); border: 1px solid var(--color-border-primary);">BG Primary</div>
+            <div class="color-swatch" style="background: var(--color-bg-secondary); color: var(--color-text-primary);">BG Secondary</div>
+            <div class="color-swatch" style="background: var(--color-bg-tertiary); color: var(--color-text-primary);">BG Tertiary</div>
+          </div>
+        </section>
+
+        <!-- Button Components -->
+        <section class="demo-section">
+          <h2>Button Components</h2>
+          <div class="component-showcase">
+            <button class="btn btn-primary">Primary Button</button>
+            <button class="btn btn-secondary">Secondary Button</button>
+            <button class="btn btn-ghost">Ghost Button</button>
+            <button class="btn btn-primary btn-sm">Small Button</button>
+            <button class="btn btn-primary" disabled>Disabled Button</button>
+          </div>
+        </section>
+
+        <!-- Metric Cards -->
+        <section class="demo-section">
+          <h2>Metric Cards</h2>
+          <div class="metrics-overview">
+            <div class="metric-card">
+              <div class="metric-value">1,234</div>
+              <div class="metric-label">Lines of Code</div>
+              <div class="metric-change positive">
+                <span>↗</span> +12.5%
+              </div>
+            </div>
+            
+            <div class="metric-card">
+              <div class="metric-value">56</div>
+              <div class="metric-label">Files Modified</div>
+              <div class="metric-change negative">
+                <span>↘</span> -3.2%
+              </div>
+            </div>
+            
+            <div class="metric-card">
+              <div class="metric-value">4.2h</div>
+              <div class="metric-label">Active Time</div>
+              <div class="metric-change positive">
+                <span>↗</span> +8.7%
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Form Elements -->
+        <section class="demo-section">
+          <h2>Form Elements</h2>
+          <div class="demo-grid">
+            <div>
+              <label for="demo-input">Text Input</label>
+              <input type="text" id="demo-input" placeholder="Enter text here..." class="search-input">
+            </div>
+            <div>
+              <label for="demo-select">Select Dropdown</label>
+              <select id="demo-select" class="filter-select">
+                <option>Option 1</option>
+                <option>Option 2</option>
+                <option>Option 3</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- Chart Demo -->
+        <section class="demo-section">
+          <h2>Chart Components</h2>
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3 class="chart-title">Sample Chart</h3>
+              <div class="chart-actions">
+                <button class="btn btn-ghost btn-sm">⛶</button>
+                <button class="btn btn-ghost btn-sm">⬇</button>
+              </div>
+            </div>
+            <div class="chart-canvas">
+              <canvas id="demoChart" width="400" height="200"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cards -->
+        <section class="demo-section">
+          <h2>Card Components</h2>
+          <div class="demo-grid">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Card Title</h3>
+                <p class="card-subtitle">Card subtitle</p>
+              </div>
+              <div class="card-body">
+                <p>This is the card body content. Cards are versatile containers for grouping related information.</p>
+              </div>
+            </div>
+            
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Another Card</h3>
+              </div>
+              <div class="card-body">
+                <div class="empty-state">
+                  <div class="empty-state-title">No data available</div>
+                  <div class="empty-state-description">This shows an empty state design</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <div class="dashboard-container">
+        <div class="footer-content">
+          <p>CodePulse Design System Demo - Showcasing components and styling</p>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Accessibility Controls Panel -->
+  <div class="accessibility-controls hidden" id="accessibilityControls">
+    <h3>Accessibility Options</h3>
+    <div class="accessibility-control">
+      <label for="highContrastToggle">High Contrast</label>
+      <button class="accessibility-toggle" id="highContrastToggle" data-feature="highContrast" aria-pressed="false">
+        <span class="sr-only">Toggle high contrast mode</span>
+      </button>
+    </div>
+    <div class="accessibility-control">
+      <label for="fontSizeSelect">Font Size</label>
+      <select class="font-size-selector" id="fontSizeSelect">
+        <option value="normal" selected>Normal</option>
+        <option value="large">Large</option>
+        <option value="extra-large">Extra Large</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="scripts/utils.js"></script>
+  <script src="scripts/theme-manager.js"></script>
+  <script src="scripts/charts.js"></script>
+  
+  <!-- Demo Chart Initialization -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        if (window.chartManager) {
+          const demoData = {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+            datasets: [{
+              label: 'Demo Data',
+              data: [12, 19, 8, 15, 22],
+              borderColor: '#2563eb',
+              backgroundColor: 'rgba(37, 99, 235, 0.1)',
+              tension: 0.4
+            }]
+          };
+          window.chartManager.createChart('demoChart', 'line', demoData);
+        }
+      }, 100);
+    });
+  </script>
+</body>
+</html>

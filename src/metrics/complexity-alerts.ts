@@ -1,18 +1,21 @@
 /**
- * src/metrics/complexity-alerts.ts
+ * @file COMPLEXITY-ALERTS.TS
  * 
- * Complexity Alerts.ts
+ * @version 2.0.0
+ * @author BleckWolf25
+ * @contributors
+ * @license MIT
+ * 
+ * @description
  * Handles complexity threshold detection and user notifications
  * Integrates with VSCode diagnostics system for inline feedback
  */
 
-// -------------------- IMPORTS -------------------- \\
-
+// ------------ IMPORTS
 import path from 'node:path';
 import * as vscode from 'vscode';
 
-// -------------------- MAIN EXPORT -------------------- \\
-
+// ------------ CLASS
 export class ComplexityAlertService {
 
   // Language-specific complexity thresholds

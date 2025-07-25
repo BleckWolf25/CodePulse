@@ -1,27 +1,31 @@
 /**
- * src/metrics/tracker.ts
- * 
- * Tracker.ts
- * File analysis pipeline
- * Session tracking
- * Event debouncing
- * Storage integration
+ * @file TRACKER.TS
+ *
+ * @version 1.0.0
+ * @author BleckWolf25
+ * @contributors
+ * @license MIT
+ *
+ * @description
+ * Metrics Tracker for Code Pulse
+ * Comprehensive file analysis pipeline with session tracking, event debouncing, and storage integration.
+ * Provides real-time complexity analysis, productivity insights, and performance monitoring.
  */
 
-// -------------------- IMPORTS -------------------- \\
-
+// ------------ IMPORTS
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { CodeComplexityAnalyzer, ComplexityMetrics } from './complexity';
-import { ConfigManager } from '../utils/config';
+import { ConfigManager } from '../utils/config-manager';
 import { MetricsStorage } from './storage';
 import { performance } from 'perf_hooks';
 import { MetricCache } from '../utils/cache';
 import { MetricsChartGenerator } from '../views/charts';
 
-// -------------------- EXPORTS -------------------- \\
-
-// Exports File Meta Data
+// ------------ INTERFACES
+/**
+ * File metadata structure for tracking analyzed files
+ */
 export interface FileMetadata {
   path: string;
   language: string;
@@ -30,7 +34,9 @@ export interface FileMetadata {
   lastModified: Date;
 }
 
-// Exports Session Data
+/**
+ * Session data structure for tracking coding sessions
+ */
 export interface SessionData {
   startTime: number;
   endTime?: number;
@@ -39,18 +45,62 @@ export interface SessionData {
   fileChanges: string[];
 }
 
-// -------------------- MAIN EXPORT -------------------- \\
+/**
+ * File history structure for tracking complexity changes over time
+ */
+export interface FileHistory {
+  timestamp: number;
+  metrics: ComplexityMetrics;
+}
 
+// ------------ CLASS
+/**
+ * Comprehensive metrics tracking system for code analysis and productivity monitoring
+ */
 export class MetricsTracker {
+  /**
+   * VS Code extension context for storage and resources
+   */
   private context: vscode.ExtensionContext;
+
+  /**
+   * Configuration manager instance
+   */
   private config: ConfigManager;
+
+  /**
+   * Metrics storage handler
+   */
   private storage: MetricsStorage;
+
+  /**
+   * Chart generator for dashboard visualization
+   */
   private chartGenerator: MetricsChartGenerator;
+
+  /**
+   * Cache for tracked file metadata
+   */
   private trackedFiles = new MetricCache<FileMetadata>();
+
+  /**
+   * Output channel for complexity insights
+   */
   private outputChannel: vscode.OutputChannel | null = null;
+
+  /**
+   * Collection of disposable event listeners
+   */
   private disposables: vscode.Disposable[] = [];
 
-  // Session tracking
+  /**
+   * Historical complexity data for files
+   */
+  private fileHistory: Map<string, FileHistory[]> = new Map();
+
+  /**
+   * Session tracking data
+   */
   private sessionsLog: SessionData[] = [];
   private lastActivityTime: number = Date.now();
   private idleThreshold: number = 5 * 60 * 1000;
@@ -59,12 +109,25 @@ export class MetricsTracker {
   private readonly DEBOUNCE_DELAY = 500;
 
   /**
-   * Initializes tracking system and restores previous state.
-   * * This constructor sets up the metrics tracker by:
-   * 1. Loading persisted data from storage.
-   * 2. Starting a new session.
-   * 3. Initializing event listeners for tracking file changes and user activity.
-   * * @param context - Extension context for storage and resources.
+   * Performance monitoring metrics
+   */
+  private performanceMetrics: {
+    analysisTime: number[];
+    memoryUsage: number[];
+    timestamp: number[];
+  } = {
+    analysisTime: [],
+    memoryUsage: [],
+    timestamp: []
+  };
+
+  /**
+   * Initializes tracking system and restores previous state
+   * This constructor sets up the metrics tracker by:
+   * 1. Loading persisted data from storage
+   * 2. Starting a new session
+   * 3. Initializing event listeners for tracking file changes and user activity
+   * @param context Extension context for storage and resources
    */
   constructor(context: vscode.ExtensionContext) {
     this.context = context;
@@ -72,16 +135,18 @@ export class MetricsTracker {
     this.storage = new MetricsStorage(context);
     this.chartGenerator = new MetricsChartGenerator(context);
 
-    this.loadPersistedData();
+    // Start session immediately to avoid blocking activation
     this.startSession();
     this.initializeTracking();
+
+    // Load persisted data asynchronously to avoid blocking activation
+    setTimeout(() => this.loadPersistedData(), 100);
   }
 
   /**
-   * Initialize Tracking if
-   * - VScode window is loaded
-   * - The file had changes
-   * or saved the file
+   * Initialize tracking event listeners for file changes and user activity
+   * Monitors VS Code window events, document changes, and file saves
+   * @private
    */
   private initializeTracking() {
     this.disposables.push(
@@ -94,28 +159,79 @@ export class MetricsTracker {
     setInterval(() => this.checkIdleTime(), 60 * 1000);
   }
 
-  // Load persisted data
+  /**
+   * Load persisted data from storage and validate file metadata
+   * @private
+   */
   private loadPersistedData() {
     try {
       const storedMetrics = this.storage.loadMetrics();
       Object.entries(storedMetrics.fileMetrics).forEach(([path, metadata]) => {
-        if (this.isFileInWorkspace(path)) {
+        if (this.isFileInWorkspace(path) && this.isValidFileMetadata(metadata)) {
           this.trackedFiles.set(path, metadata);
         }
       });
+
+      // Clean up any corrupted entries that might have been loaded
+      this.clearCorruptedEntries();
     } catch (error) {
       console.error('Failed to load metrics:', error);
     }
   }
 
-  // Helper function that determinates if the file / folder still exists
+  /**
+   * Validate file metadata structure for data integrity
+   * @param metadata Metadata object to validate
+   * @returns True if metadata is valid
+   * @private
+   */
+  private isValidFileMetadata(metadata: any): metadata is FileMetadata {
+    if (!metadata || typeof metadata !== 'object') {
+      return false;
+    }
+
+    // Check basic properties
+    if (typeof metadata.path !== 'string' ||
+        typeof metadata.language !== 'string' ||
+        typeof metadata.lines !== 'number') {
+      return false;
+    }
+
+    // Check complexity object
+    if (!metadata.complexity ||
+        typeof metadata.complexity !== 'object' ||
+        typeof metadata.complexity.cyclomaticComplexity !== 'number') {
+      return false;
+    }
+
+    // Convert lastModified to Date if it's a string
+    if (typeof metadata.lastModified === 'string') {
+      metadata.lastModified = new Date(metadata.lastModified);
+    }
+
+    // Check if lastModified is a valid Date
+    if (!(metadata.lastModified instanceof Date) || isNaN(metadata.lastModified.getTime())) {
+      metadata.lastModified = new Date(); // Fallback to current date
+    }
+
+    return true;
+  }
+
+  /**
+   * Helper function that determines if the file/folder still exists in workspace
+   * @param filePath Path to check for workspace membership
+   * @returns True if file is in current workspace
+   * @private
+   */
   private isFileInWorkspace(filePath: string): boolean {
     return !!vscode.workspace.workspaceFolders?.some(folder =>
       filePath.startsWith(folder.uri.fsPath)
     );
   }
 
-  // Show productivity Dashboard
+  /**
+   * Show productivity dashboard with charts and insights
+   */
   public showProductivityDashboard(): void {
     this.generateDailyReport();
 
@@ -132,6 +248,10 @@ export class MetricsTracker {
     panel.webview.html = this.chartGenerator.generateDashboardHTML();
   }
 
+  /**
+   * Generate daily report and update stored metrics
+   * @private
+   */
   private generateDailyReport(): void {
     const today = new Date().toISOString().split('T')[0];
     const sessionInsights = this.getSessionInsights();
@@ -158,6 +278,11 @@ export class MetricsTracker {
     this.startSession();
   }
 
+  /**
+   * Handle editor change events for file tracking
+   * @param editor Optional text editor instance
+   * @private
+   */
   private handleEditorChange(editor?: vscode.TextEditor) {
     if (!editor || !this.shouldTrackDocument(editor.document)) {
       return;
@@ -168,14 +293,15 @@ export class MetricsTracker {
 
   /**
    * Handles document change events with debounced analysis
-   * @param event - VSCode document change event
+   * @param event VSCode document change event
+   * @private
    */
   private handleDocumentChange(event: vscode.TextDocumentChangeEvent) {
     if (!this.shouldTrackDocument(event.document)) {
       return;
     }
 
-    // Add to debounced analysis queue
+    // Debounced analysis queue
     this.analysisQueue.add(event.document.fileName);
 
     // Debounce the analysis to prevent excessive processing
@@ -193,6 +319,7 @@ export class MetricsTracker {
   /**
    * Processes queued files for analysis
    * Implements parallel-safe processing with error handling
+   * @private
    */
   private processAnalysisQueue() {
     this.analysisQueue.forEach(async (fileName) => {
@@ -208,6 +335,11 @@ export class MetricsTracker {
     this.analysisQueue.clear();
   }
 
+  /**
+   * Handle file save events for full complexity analysis
+   * @param document Text document that was saved
+   * @private
+   */
   private handleFileSave(document: vscode.TextDocument) {
     if (this.shouldTrackDocument(document)) {
       this.analyzeDocument(document, true); // Full analysis on save
@@ -215,6 +347,12 @@ export class MetricsTracker {
     }
   }
 
+  /**
+   * Determine if a document should be tracked based on configuration
+   * @param document Text document to evaluate
+   * @returns True if document should be tracked
+   * @private
+   */
   private shouldTrackDocument(document: vscode.TextDocument): boolean {
     if (document.uri.scheme !== 'file' || !document.fileName) {
       return false;
@@ -229,7 +367,10 @@ export class MetricsTracker {
     return !config.excludedLanguages.includes(fileExtension);
   }
 
-  // Session management methods
+  /**
+   * Start a new coding session for tracking
+   * @private
+   */
   private startSession() {
     this.sessionsLog.push({
       startTime: performance.now(),
@@ -239,6 +380,11 @@ export class MetricsTracker {
     });
   }
 
+  /**
+   * Track file changes and update session data
+   * @param filePath Path of the changed file
+   * @private
+   */
   private trackFileChange(filePath: string) {
     const currentSession = this.sessionsLog[this.sessionsLog.length - 1];
     if (!currentSession.fileChanges.includes(filePath)) {
@@ -247,6 +393,10 @@ export class MetricsTracker {
     this.lastActivityTime = Date.now();
   }
 
+  /**
+   * Check for idle time and update session metrics
+   * @private
+   */
   private checkIdleTime() {
     const currentTime = Date.now();
     const idleDuration = currentTime - this.lastActivityTime;
@@ -260,15 +410,17 @@ export class MetricsTracker {
 
   /**
    * Performs complexity analysis with mode selection
-   * @param document - Document to analyze
-   * @param isSaved - Flag for full vs light analysis
+   * @param document Document to analyze
+   * @param isSaved Flag for full vs light analysis
+   * @private
    */
-  private analyzeDocument(document: vscode.TextDocument, isSaved: boolean = false) {
+  private async analyzeDocument(document: vscode.TextDocument, isSaved: boolean = false) {
+    const startTime = performance.now();
     try {
       const filePath = document.fileName;
 
       // Skip if we're doing a light analysis and we already have this file cached
-      if (!isSaved && this.trackedFiles.get(filePath)) {
+      if (!isSaved && await this.trackedFiles.get(filePath)) {
         return;
       }
 
@@ -277,11 +429,21 @@ export class MetricsTracker {
 
       // Only do full complexity analysis on save or for small files
       let complexity: ComplexityMetrics;
-      if (isSaved || content.length < 50000) {
-        complexity = CodeComplexityAnalyzer.analyzeComplexity(content, fileExtension);
-      } else {
-        // For large files during typing, use a simpler analysis
-        complexity = CodeComplexityAnalyzer.quickAnalyze(content, fileExtension);
+      try {
+        if (isSaved || content.length < 50000) {
+          complexity = await CodeComplexityAnalyzer.analyzeComplexity(content, fileExtension);
+        } else {
+          // For large files during typing, use a simpler analysis
+          complexity = CodeComplexityAnalyzer.quickAnalyze(content, fileExtension);
+        }
+
+        // Ensure complexity object has required properties
+        if (!complexity || typeof complexity.cyclomaticComplexity !== 'number') {
+          complexity = this.getDefaultComplexityMetrics();
+        }
+      } catch (error) {
+        console.warn(`Failed to analyze complexity for ${filePath}:`, error);
+        complexity = this.getDefaultComplexityMetrics();
       }
 
       const fileMetadata: FileMetadata = {
@@ -295,6 +457,9 @@ export class MetricsTracker {
       // Update cache
       this.trackedFiles.set(filePath, fileMetadata);
 
+      // Update file history
+      this.updateMetrics(filePath, complexity);
+
       // Only show insights on save if enabled
       if (isSaved && this.config.getConfig().enableDetailedLogging) {
         const recommendations = CodeComplexityAnalyzer.getComplexityRecommendations(complexity);
@@ -302,10 +467,77 @@ export class MetricsTracker {
       }
     } catch (error) {
       console.error(`Error analyzing document: ${document.fileName}`, error);
+    } finally {
+      this.recordPerformanceMetrics('documentAnalysis', performance.now() - startTime);
     }
   }
 
-  // Log Complexity Insights
+  /**
+   * Get historical complexity data for a specific file
+   * @param filePath Path of the file to get history for
+   * @returns Array of historical complexity data points
+   */
+  public getFileHistory(filePath: string): FileHistory[] {
+    return this.fileHistory.get(filePath) || [];
+  }
+
+  /**
+   * Update metrics history for a specific file
+   * @param filePath Path of the file to update
+   * @param metrics Complexity metrics to add to history
+   */
+  public updateMetrics(filePath: string, metrics: ComplexityMetrics): void {
+    const history = this.getFileHistory(filePath);
+    history.push({
+      timestamp: Date.now(),
+      metrics
+    });
+    this.fileHistory.set(filePath, history);
+  }
+
+  /**
+   * Record performance metrics for analysis operations
+   * @param _operation Operation name (currently unused)
+   * @param duration Duration of the operation in milliseconds
+   * @private
+   */
+  private recordPerformanceMetrics(_operation: string, duration: number) {
+    this.performanceMetrics.analysisTime.push(duration);
+    this.performanceMetrics.memoryUsage.push(process.memoryUsage().heapUsed);
+    this.performanceMetrics.timestamp.push(Date.now());
+
+    // Trim old metrics
+    if (this.performanceMetrics.analysisTime.length > 1000) {
+      this.performanceMetrics.analysisTime.shift();
+      this.performanceMetrics.memoryUsage.shift();
+      this.performanceMetrics.timestamp.shift();
+    }
+  }
+
+  /**
+   * Get default complexity metrics for fallback scenarios
+   * @returns Default complexity metrics object
+   * @private
+   */
+  private getDefaultComplexityMetrics(): ComplexityMetrics {
+    return {
+      totalComplexity: 1,
+      cyclomaticComplexity: 1,
+      maintainabilityIndex: 100,
+      halsteadMetrics: {
+        difficulty: 1,
+        volume: 1,
+        effort: 1
+      }
+    };
+  }
+
+  /**
+   * Log complexity insights to VS Code output channel
+   * @param file File metadata with complexity information
+   * @param recommendations Array of improvement recommendations
+   * @private
+   */
   private logComplexityInsights(file: FileMetadata, recommendations: string[]) {
     try {
       if (!this.outputChannel) {
@@ -328,7 +560,9 @@ export class MetricsTracker {
     }
   }
 
-  // Persist metrics to storage
+  /**
+   * Persist metrics to storage with daily aggregation
+   */
   public persistMetrics() {
     try {
       const storedMetrics = this.storage.loadMetrics();
@@ -376,6 +610,14 @@ export class MetricsTracker {
   }
 
   /**
+   * Get stored metrics for dashboard
+   * @returns Stored metrics from storage
+   */
+  public getStoredMetrics() {
+    return this.storage.loadMetrics();
+  }
+
+  /**
    * Calculates session insights with outlier filtering
    * @returns Current session metrics with statistical normalization
    */
@@ -408,6 +650,11 @@ export class MetricsTracker {
     }
   }
 
+  /**
+   * Get breakdown of tracked files by programming language
+   * @returns Object mapping languages to file counts
+   * @private
+   */
   private getLanguageBreakdown() {
     const breakdown: Record<string, number> = {};
     this.trackedFiles.forEach((file: FileMetadata) => {
@@ -416,10 +663,18 @@ export class MetricsTracker {
     return breakdown;
   }
 
+  /**
+   * Calculate average complexity across all tracked files with outlier filtering
+   * @returns Average complexity value
+   * @private
+   */
   private calculateAverageComplexity() {
     const complexities: number[] = [];
     this.trackedFiles.forEach((file: FileMetadata) => {
-      complexities.push(file.complexity.cyclomaticComplexity);
+      // Add null checks to prevent runtime errors
+      if (file && file.complexity && typeof file.complexity.cyclomaticComplexity === 'number') {
+        complexities.push(file.complexity.cyclomaticComplexity);
+      }
     });
 
     if (complexities.length === 0) {
@@ -441,6 +696,32 @@ export class MetricsTracker {
       : mean;
   }
 
+  /**
+   * Clear corrupted cache entries and rebuild with valid data
+   */
+  public clearCorruptedEntries() {
+    const validEntries: Array<{path: string, metadata: FileMetadata}> = [];
+
+    this.trackedFiles.forEach((metadata, path) => {
+      if (this.isValidFileMetadata(metadata)) {
+        validEntries.push({path, metadata});
+      } else {
+        console.warn(`Removing corrupted cache entry for: ${path}`);
+      }
+    });
+
+    // Create a new cache instance to replace the old one
+    this.trackedFiles = new MetricCache<FileMetadata>();
+
+    // Re-add valid entries
+    validEntries.forEach(({path, metadata}) => {
+      this.trackedFiles.set(path, metadata);
+    });
+  }
+
+  /**
+   * Dispose of the tracker and clean up resources
+   */
   public dispose(): void {
     this.disposables.forEach(d => d.dispose());
     this.disposables = [];

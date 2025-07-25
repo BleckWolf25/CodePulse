@@ -23,3 +23,4 @@ coverage/**
 # Keep these
 !dist/
 !resources/
+!src/web/

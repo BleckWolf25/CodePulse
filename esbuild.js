@@ -16,11 +16,11 @@ const baseConfig = {
   outfile: 'dist/extension.js',
   plugins: [
     nodeExternalsPlugin({
-      allowList: ['chart.js'],
-      exclude: ['nyc', 'mocha']
+      allowList: ['chart.js', 'acorn-walk'],
+      exclude: ['nyc', 'mocha', 'ws']
     })
   ],
-  external: ['vscode', 'typescript', 'nyc', 'mocha'],
+  external: ['vscode', 'typescript', 'nyc', 'mocha', 'ws'],
   format: 'cjs',
   sourcemap: !isProduction,
   target: 'es2020',

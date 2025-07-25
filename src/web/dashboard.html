@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Code Pulse - Developer Productivity Dashboard</title>
+  
+  <!-- External Dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Styles -->
+  <link rel="stylesheet" href="styles/variables.css">
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/dashboard.css">
+  <link rel="stylesheet" href="styles/responsive.css">
+  <link rel="stylesheet" href="styles/accessibility.css">
+  <link rel="stylesheet" href="styles/interactive-features.css">
+</head>
+<body>
+  <!-- Accessibility Filters -->
+  <svg class="accessibility-filters" aria-hidden="true">
+    <defs>
+      <!-- Protanopia (Red-blind) Filter -->
+      <filter id="protanopia-filter">
+        <feColorMatrix type="matrix" values="0.567 0.433 0 0 0
+                                             0.558 0.442 0 0 0
+                                             0 0.242 0.758 0 0
+                                             0 0 0 1 0"/>
+      </filter>
+
+      <!-- Deuteranopia (Green-blind) Filter -->
+      <filter id="deuteranopia-filter">
+        <feColorMatrix type="matrix" values="0.625 0.375 0 0 0
+                                             0.7 0.3 0 0 0
+                                             0 0.3 0.7 0 0
+                                             0 0 0 1 0"/>
+      </filter>
+
+      <!-- Tritanopia (Blue-blind) Filter -->
+      <filter id="tritanopia-filter">
+        <feColorMatrix type="matrix" values="0.95 0.05 0 0 0
+                                             0 0.433 0.567 0 0
+                                             0 0.475 0.525 0 0
+                                             0 0 0 1 0"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Skip Links -->
+  <div class="skip-links">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#navigation" class="skip-link">Skip to navigation</a>
+    <a href="#theme-controls" class="skip-link">Skip to theme controls</a>
+  </div>
+
+  <!-- Screen Reader Live Region -->
+  <div id="sr-live-region" class="sr-live-region" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="dashboard">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="dashboard-container">
+        <div class="header-content">
+          <div class="header-title">
+            <div class="header-logo">CP</div>
+            <div class="header-text">
+              <h1>Code Pulse</h1>
+              <p class="header-subtitle">Developer Productivity Dashboard</p>
+            </div>
+          </div>
+          
+          <div class="header-actions">
+            <div class="search-container">
+              <input 
+                type="text" 
+                id="searchInput" 
+                class="search-input" 
+                placeholder="Search metrics..."
+                autocomplete="off"
+              >
+              <span class="search-icon">🔍</span>
+            </div>
+            
+            <button class="btn btn-ghost" data-action="refresh" title="Refresh Dashboard (Ctrl+R)">
+              🔄 Refresh
+            </button>
+            
+            <button class="btn btn-secondary" data-action="export" title="Export Data (Ctrl+E)">
+              📊 Export
+            </button>
+            
+            <button class="theme-toggle" title="Toggle Theme (Ctrl+Shift+T)" aria-label="Toggle theme">
+              <span class="theme-icon" aria-hidden="true">🌙</span>
+            </button>
+
+            <button class="accessibility-menu-toggle" title="Accessibility Options" aria-label="Open accessibility options">
+              <span aria-hidden="true">♿</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-content" id="main-content" role="main">
+      <div class="dashboard-container">
+        
+        <!-- Metrics Overview -->
+        <section class="metrics-overview">
+          <div class="metric-card">
+            <div class="metric-value" data-metric="linesOfCode">0</div>
+            <div class="metric-label">Lines of Code</div>
+            <div class="metric-change positive">
+              <span>↗</span> +12.5%
+            </div>
+          </div>
+          
+          <div class="metric-card">
+            <div class="metric-value" data-metric="filesModified">0</div>
+            <div class="metric-label">Files Modified</div>
+            <div class="metric-change positive">
+              <span>↗</span> +8.3%
+            </div>
+          </div>
+          
+          <div class="metric-card">
+            <div class="metric-value" data-metric="activeTime">0</div>
+            <div class="metric-label">Active Time (min)</div>
+            <div class="metric-change negative">
+              <span>↘</span> -2.1%
+            </div>
+          </div>
+          
+          <div class="metric-card">
+            <div class="metric-value" data-metric="complexity">0</div>
+            <div class="metric-label">Avg Complexity</div>
+            <div class="metric-change positive">
+              <span>↗</span> +5.7%
+            </div>
+          </div>
+        </section>
+
+        <!-- Smart Insights Panel -->
+        <section class="insights-panel">
+          <div class="insights-header">
+            <h2 class="insights-title">
+              💡 Smart Insights
+            </h2>
+          </div>
+          <div class="insights-list">
+            <!-- Insights will be populated by JavaScript -->
+            <div class="insight-item">
+              <div class="insight-icon suggestion">💡</div>
+              <div class="insight-content">
+                <h4 class="insight-title">Optimize Focus Time</h4>
+                <p class="insight-description">Your productivity peaks between 9-11 AM. Consider scheduling complex tasks during this time.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="charts-section">
+          <div class="charts-header">
+            <h2 class="charts-title">Analytics</h2>
+            <div class="charts-filters">
+              <select class="filter-select" name="timeRange">
+                <option value="today">Today</option>
+                <option value="week" selected>This Week</option>
+                <option value="month">This Month</option>
+                <option value="quarter">This Quarter</option>
+              </select>
+              
+              <select class="filter-select" name="language">
+                <option value="all" selected>All Languages</option>
+                <option value="typescript">TypeScript</option>
+                <option value="javascript">JavaScript</option>
+                <option value="python">Python</option>
+                <option value="java">Java</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="charts-grid">
+            <!-- Language Distribution Chart -->
+            <div class="chart-container">
+              <div class="chart-header">
+                <h3 class="chart-title">Language Distribution</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-ghost btn-sm" data-chart-action="fullscreen" data-chart-id="languageChart">
+                    ⛶
+                  </button>
+                  <button class="btn btn-ghost btn-sm" data-chart-action="download" data-chart-id="languageChart">
+                    ⬇
+                  </button>
+                </div>
+              </div>
+              <div class="chart-canvas">
+                <canvas id="languageChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Activity Timeline Chart -->
+            <div class="chart-container">
+              <div class="chart-header">
+                <h3 class="chart-title">Activity Timeline</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-ghost btn-sm" data-chart-action="fullscreen" data-chart-id="activityChart">
+                    ⛶
+                  </button>
+                  <button class="btn btn-ghost btn-sm" data-chart-action="download" data-chart-id="activityChart">
+                    ⬇
+                  </button>
+                </div>
+              </div>
+              <div class="chart-canvas">
+                <canvas id="activityChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Complexity Trend Chart -->
+            <div class="chart-container">
+              <div class="chart-header">
+                <h3 class="chart-title">Complexity Trends</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-ghost btn-sm" data-chart-action="fullscreen" data-chart-id="complexityChart">
+                    ⛶
+                  </button>
+                  <button class="btn btn-ghost btn-sm" data-chart-action="download" data-chart-id="complexityChart">
+                    ⬇
+                  </button>
+                </div>
+              </div>
+              <div class="chart-canvas">
+                <canvas id="complexityChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Productivity Score Chart -->
+            <div class="chart-container">
+              <div class="chart-header">
+                <h3 class="chart-title">Productivity Score</h3>
+                <div class="chart-actions">
+                  <button class="btn btn-ghost btn-sm" data-chart-action="fullscreen" data-chart-id="productivityChart">
+                    ⛶
+                  </button>
+                  <button class="btn btn-ghost btn-sm" data-chart-action="download" data-chart-id="productivityChart">
+                    ⬇
+                  </button>
+                </div>
+              </div>
+              <div class="chart-canvas">
+                <canvas id="productivityChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Additional Metrics Grid -->
+        <section class="metrics-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Recent Activity</h3>
+              <p class="card-subtitle">Last 24 hours</p>
+            </div>
+            <div class="card-body">
+              <div class="activity-list">
+                <!-- Activity items will be populated by JavaScript -->
+                <div class="empty-state">
+                  <div class="empty-state-title">No recent activity</div>
+                  <div class="empty-state-description">Start coding to see your activity here</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Top Languages</h3>
+              <p class="card-subtitle">This week</p>
+            </div>
+            <div class="card-body">
+              <div class="language-stats">
+                <!-- Language stats will be populated by JavaScript -->
+                <div class="empty-state">
+                  <div class="empty-state-title">No data available</div>
+                  <div class="empty-state-description">Language statistics will appear here</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Goals & Targets</h3>
+              <p class="card-subtitle">Weekly progress</p>
+            </div>
+            <div class="card-body">
+              <div class="goals-progress">
+                <!-- Goals will be populated by JavaScript -->
+                <div class="empty-state">
+                  <div class="empty-state-title">Set your goals</div>
+                  <div class="empty-state-description">Configure productivity targets in settings</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <div class="dashboard-container">
+        <div class="footer-content">
+          <p>Last updated: <span id="lastUpdate">Never</span></p>
+          <div class="footer-stats">
+            <div class="footer-stat">
+              <span>Session: <span data-metric="sessionDuration">0</span>min</span>
+            </div>
+            <div class="footer-stat">
+              <span>Files: <span data-metric="sessionFiles">0</span></span>
+            </div>
+            <div class="footer-stat">
+              <span>Active: <span data-metric="sessionActive">0</span>min</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Accessibility Controls Panel -->
+  <div class="accessibility-controls hidden" id="accessibilityControls">
+    <h3>Accessibility Options</h3>
+
+    <div class="accessibility-control">
+      <label for="highContrastToggle">High Contrast</label>
+      <button class="accessibility-toggle" id="highContrastToggle" data-feature="highContrast" aria-pressed="false">
+        <span class="sr-only">Toggle high contrast mode</span>
+      </button>
+    </div>
+
+    <div class="accessibility-control">
+      <label for="reducedMotionToggle">Reduced Motion</label>
+      <button class="accessibility-toggle" id="reducedMotionToggle" data-feature="reducedMotion" aria-pressed="false">
+        <span class="sr-only">Toggle reduced motion</span>
+      </button>
+    </div>
+
+    <div class="accessibility-control">
+      <label for="focusIndicatorsToggle">Focus</label>
+      <button class="accessibility-toggle" id="focusIndicatorsToggle" data-feature="focusIndicators" aria-pressed="true">
+        <span class="sr-only">Toggle focus indicators</span>
+      </button>
+    </div>
+
+    <div class="accessibility-control">
+      <label for="fontSizeSelect">Font Size</label>
+      <select class="font-size-selector" id="fontSizeSelect">
+        <option value="small">Small</option>
+        <option value="normal" selected>Normal</option>
+        <option value="large">Large</option>
+        <option value="extra-large">Extra Large</option>
+      </select>
+    </div>
+
+    <div class="accessibility-control">
+      <label for="colorBlindSelect">Color Blindness</label>
+      <select class="colorblind-selector" id="colorBlindSelect">
+        <option value="none" selected>None</option>
+        <option value="protanopia">Protanopia (Red-blind)</option>
+        <option value="deuteranopia">Deuteranopia (Green-blind)</option>
+        <option value="tritanopia">Tritanopia (Blue-blind)</option>
+      </select>
+    </div>
+
+    <div class="accessibility-control">
+      <button class="btn btn-secondary" id="resetAccessibility">Reset to Defaults</button>
+    </div>
+  </div>
+
+  <!-- Notification Container -->
+  <div class="notification-container" id="notificationContainer"></div>
+
+  <!-- Loading Overlays -->
+  <div class="loading-overlay" style="display: none;">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="scripts/utils.js"></script>
+  <script src="scripts/theme-manager.js"></script>
+  <script src="scripts/charts.js"></script>
+  <script src="scripts/advanced-filters.js"></script>
+  <script src="scripts/export-manager.js"></script>
+  <script src="scripts/goal-manager.js"></script>
+  <script src="scripts/dashboard.js"></script>
+  
+  <!-- Initialize Charts -->
+  <script>
+    // Initialize sample charts when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Wait for chart manager to be ready
+      setTimeout(() => {
+        if (window.chartManager) {
+          initializeSampleCharts();
+        }
+      }, 100);
+    });
+
+    function initializeSampleCharts() {
+      // Language Distribution Chart
+      const languageData = {
+        labels: ['TypeScript', 'JavaScript', 'Python', 'CSS', 'HTML'],
+        datasets: [{
+          data: [45, 25, 15, 10, 5],
+          backgroundColor: ['#3178c6', '#f7df1e', '#3776ab', '#1572b6', '#e34f26']
+        }]
+      };
+      
+      window.chartManager.createChart('languageChart', 'doughnut', languageData);
+
+      // Activity Timeline Chart
+      const activityData = {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [{
+          label: 'Files Modified',
+          data: [12, 19, 8, 15, 22, 3, 7],
+          borderColor: '#2563eb',
+          backgroundColor: 'rgba(37, 99, 235, 0.1)',
+          tension: 0.4
+        }]
+      };
+      
+      window.chartManager.createChart('activityChart', 'line', activityData);
+
+      // Complexity Trend Chart
+      const complexityData = {
+        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        datasets: [{
+          label: 'Average Complexity',
+          data: [8.5, 9.2, 7.8, 8.9],
+          backgroundColor: ['#10b981', '#f59e0b', '#10b981', '#f59e0b']
+        }]
+      };
+      
+      window.chartManager.createChart('complexityChart', 'bar', complexityData);
+
+      // Productivity Score Chart
+      const productivityData = {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+        datasets: [{
+          label: 'Productivity Score',
+          data: [85, 92, 78, 88, 95],
+          borderColor: '#8b5cf6',
+          backgroundColor: 'rgba(139, 92, 246, 0.1)',
+          tension: 0.4
+        }]
+      };
+      
+      window.chartManager.createChart('productivityChart', 'line', productivityData);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,439 @@
+/**
+ * CodePulse Base Stylesheet
+ *
+ * This stylesheet provides the foundational styles for the CodePulse application,
+ * establishing a consistent baseline across all browsers and devices. Key features include:
+ *
+ * version 1.0.0
+ *
+ * - Modern CSS reset for cross-browser consistency
+ * - Typography system with semantic heading hierarchy
+ * - Form element styling and accessibility
+ * - Link states and focus management
+ * - Code syntax highlighting support
+ * - Table styling for data presentation
+ * - Utility classes for common patterns
+ * - Custom scrollbar styling
+ * - Selection and focus-visible states
+ * - Reduced motion support
+ */
+
+/* ======================================================================= */
+/* MODERN CSS RESET                                                        */
+/* ======================================================================= */
+
+/**
+ * CSS Reset
+ * Removes default browser styling and establishes consistent box-sizing
+ * across all elements. Includes modern best practices for font rendering
+ * and text optimization.
+ */
+/* Universal box-sizing and reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Root element optimization */
+html {
+  line-height: 1.15;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Body element with theme-aware styling */
+body {
+  margin: 0;
+  font-family: var(--font-family-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-primary);
+  transition: background-color var(--transition-base), color var(--transition-base);
+  overflow-x: hidden;
+}
+
+/* ======================================================================= */
+/* TYPOGRAPHY SYSTEM                                                       */
+/* ======================================================================= */
+
+/**
+ * Typography Hierarchy
+ * Establishes a consistent typographic scale with semantic heading levels,
+ * optimized spacing, and accessibility-friendly contrast ratios.
+ */
+/* Base heading styles */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+  letter-spacing: -0.025em;
+}
+
+/* Primary heading - Page titles */
+h1 {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: -0.05em;
+}
+
+/* Secondary heading - Section titles */
+h2 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Tertiary heading - Subsection titles */
+h3 {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Quaternary heading - Component titles */
+h4 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Quinary heading - Card titles */
+h5 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Senary heading - Labels and captions */
+h6 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Paragraph text with secondary color */
+p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+/* ======================================================================= */
+/* LINK STYLES                                                             */
+/* ======================================================================= */
+
+/**
+ * Link States
+ * Provides consistent styling for all link states including hover,
+ * focus, and active states with accessibility considerations.
+ */
+/* Default link styling */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+/* Link hover state */
+a:hover {
+  color: var(--color-primary-hover);
+  text-decoration: underline;
+}
+
+/* Link focus state for keyboard navigation */
+a:focus {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ======================================================================= */
+/* LIST ELEMENTS                                                           */
+/* ======================================================================= */
+
+/**
+ * List Reset
+ * Removes default list styling to allow for custom implementations
+ * while maintaining semantic structure.
+ */
+ul, ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ======================================================================= */
+/* FORM ELEMENTS                                                           */
+/* ======================================================================= */
+
+/**
+ * Form Controls
+ * Consistent styling for all form elements with focus states,
+ * transitions, and accessibility features.
+ */
+/* Form element inheritance */
+button, input, optgroup, select, textarea {
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0;
+}
+
+/* Button reset for custom styling */
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  outline: none;
+}
+
+/* Input field styling */
+input, textarea, select {
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+/* Input focus states */
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* ======================================================================= */
+/* IMAGE ELEMENTS                                                          */
+/* ======================================================================= */
+
+/**
+ * Image Optimization
+ * Responsive image handling with proper aspect ratio preservation
+ * and display optimization.
+ */
+/* Responsive image styling */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ======================================================================= */
+/* CODE ELEMENTS                                                           */
+/* ======================================================================= */
+
+/**
+ * Code Syntax Styling
+ * Monospace font styling for code elements with proper contrast
+ * and syntax highlighting support.
+ */
+
+/* Base code styling */
+code, pre {
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+}
+
+/* Inline code styling */
+code {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Code block styling */
+pre {
+  background-color: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+  line-height: var(--line-height-relaxed);
+}
+
+/* Code within pre blocks */
+pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-weight: var(--font-weight-normal);
+}
+
+/* ======================================================================= */
+/* TABLE ELEMENTS                                                          */
+/* ======================================================================= */
+
+/**
+ * Table Styling
+ * Consistent table presentation with proper spacing, borders,
+ * and header differentiation.
+ */
+/* Table structure */
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* Table cell styling */
+th, td {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+/* Table header styling */
+th {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-secondary);
+}
+
+/* ======================================================================= */
+/* UTILITY CLASSES                                                         */
+/* ======================================================================= */
+
+/**
+ * Utility Classes
+ * Common utility classes for text alignment, typography, colors,
+ * and accessibility features.
+ */
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Text alignment utilities */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+
+/* Font family utilities */
+.font-mono { font-family: var(--font-family-mono); }
+
+/* Font weight utilities */
+.font-normal { font-weight: var(--font-weight-normal); }
+.font-medium { font-weight: var(--font-weight-medium); }
+.font-semibold { font-weight: var(--font-weight-semibold); }
+.font-bold { font-weight: var(--font-weight-bold); }
+
+/* Font size utilities */
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+.text-3xl { font-size: var(--font-size-3xl); }
+.text-4xl { font-size: var(--font-size-4xl); }
+
+/* Text color utilities */
+.text-primary { color: var(--color-text-primary); }
+.text-secondary { color: var(--color-text-secondary); }
+.text-tertiary { color: var(--color-text-tertiary); }
+.text-muted { color: var(--color-text-muted); }
+
+/* Background color utilities */
+.bg-primary { background-color: var(--color-bg-primary); }
+.bg-secondary { background-color: var(--color-bg-secondary); }
+.bg-tertiary { background-color: var(--color-bg-tertiary); }
+
+/* ======================================================================= */
+/* SCROLLBAR STYLING                                                       */
+/* ======================================================================= */
+
+/**
+ * Custom Scrollbars
+ * Webkit-based custom scrollbar styling that matches the application
+ * theme and provides better visual integration.
+ */
+/* Scrollbar track and thumb sizing */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Scrollbar track background */
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+/* Scrollbar thumb styling */
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-secondary);
+  border-radius: var(--radius-full);
+}
+
+/* Scrollbar thumb hover state */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-tertiary);
+}
+
+/* ======================================================================= */
+/* TEXT SELECTION                                                          */
+/* ======================================================================= */
+
+/**
+ * Selection Styling
+ * Custom text selection colors that maintain readability
+ * and match the application theme.
+ */
+::selection {
+  background-color: var(--color-primary-light);
+  color: var(--color-text-primary);
+}
+
+/* ======================================================================= */
+/* FOCUS MANAGEMENT                                                        */
+/* ======================================================================= */
+
+/**
+ * Focus Visible
+ * Modern focus management using :focus-visible for better
+ * keyboard navigation accessibility.
+ */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ======================================================================= */
+/* ACCESSIBILITY PREFERENCES                                               */
+/* ======================================================================= */
+
+/**
+ * Reduced Motion Support
+ * Respects user preference for reduced motion by disabling
+ * animations and transitions when requested.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,796 @@
+/**
+ * CodePulse Error Monitoring Dashboard Stylesheet
+ *
+ * This stylesheet provides comprehensive styling for the error monitoring and system
+ * health dashboard, enabling real-time monitoring of application performance, error
+ * tracking, and system diagnostics. Key features include:
+ *
+ * version 1.0.0
+ *
+ * - System health overview with status indicators
+ * - Real-time error tracking and categorization
+ * - Performance monitoring with visual charts
+ * - Memory leak detection and analysis
+ * - Comprehensive logging interface
+ * - Configurable monitoring settings
+ * - Severity-based color coding system
+ * - Responsive design for all devices
+ * - Accessibility-compliant interface
+ * - Professional diagnostic styling
+ */
+
+/* ======================================================================= */
+/* MAIN CONTAINER LAYOUT                                                   */
+/* ======================================================================= */
+
+/**
+ * Primary Container
+ * Main wrapper for the error monitoring dashboard with consistent
+ * styling and layout structure for professional diagnostics interface.
+ */
+
+/* Main error monitoring container */
+.error-monitoring-container {
+  padding: 1.5rem;
+  background: var(--color-bg-primary);
+  border-radius: var(--radius-lg);
+  margin-bottom: 2rem;
+}
+
+/* Monitoring dashboard header */
+.monitoring-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+/* Header title styling */
+.monitoring-header h2 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+/* Action buttons container */
+.monitoring-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ======================================================================= */
+/* SYSTEM HEALTH OVERVIEW                                                  */
+/* ======================================================================= */
+
+/**
+ * Health Status Cards
+ * Real-time system health indicators with color-coded status
+ * and responsive grid layout for comprehensive monitoring.
+ */
+
+/* System health overview section */
+.system-health-overview {
+  margin-bottom: 2rem;
+}
+
+/* Responsive grid for health cards */
+.health-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+/* Individual health status card */
+.health-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+}
+
+/* Health card hover effects */
+.health-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Healthy status indicator */
+.health-card.status-healthy {
+  border-left: 4px solid #10b981;
+}
+
+/* Warning status indicator */
+.health-card.status-warning {
+  border-left: 4px solid #f59e0b;
+}
+
+/* Critical status indicator */
+.health-card.status-critical {
+  border-left: 4px solid #ef4444;
+}
+
+/* Health card icon styling */
+.health-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+}
+
+/* Health card content area */
+.health-content {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Health metric value */
+.health-value {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+  margin-bottom: 0.25rem;
+}
+
+/* Health metric label */
+.health-label {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ======================================================================= */
+/* TAB NAVIGATION SYSTEM                                                    */
+/* ======================================================================= */
+
+/**
+ * Monitoring Tabs
+ * Navigation interface for switching between different monitoring
+ * sections with active states and smooth transitions.
+ */
+
+/* Tab navigation container */
+.monitoring-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border-primary);
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+
+/* Individual monitoring tab */
+.monitoring-tab {
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+}
+
+/* Tab hover state */
+.monitoring-tab:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+}
+
+/* Active tab styling */
+.monitoring-tab.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+/* Hidden tab content */
+.monitoring-tab-content {
+  display: none;
+}
+
+/* Active tab content */
+.monitoring-tab-content.active {
+  display: block;
+}
+
+/* ======================================================================= */
+/* ERROR TRACKING DASHBOARD                                                */
+/* ======================================================================= */
+
+/**
+ * Error Dashboard
+ * Comprehensive error tracking interface with severity-based
+ * categorization, filtering, and detailed error information.
+ */
+
+/* Error dashboard container */
+.errors-dashboard {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+}
+
+/* Error summary cards grid */
+.errors-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* Individual error summary card */
+.error-summary-card {
+  text-align: center;
+  padding: 1rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-base);
+}
+
+/* Critical severity indicator */
+.error-summary-card.severity-critical {
+  border-left: 4px solid #dc2626;
+}
+
+/* High severity indicator */
+.error-summary-card.severity-high {
+  border-left: 4px solid #ea580c;
+}
+
+/* Medium severity indicator */
+.error-summary-card.severity-medium {
+  border-left: 4px solid #ca8a04;
+}
+
+/* Low severity indicator */
+.error-summary-card.severity-low {
+  border-left: 4px solid #16a34a;
+}
+
+/* Error count display */
+.error-count {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: 0.25rem;
+}
+
+/* Error category label */
+.error-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Error filtering controls */
+.errors-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* Filter control sizing */
+.errors-filters .form-control {
+  min-width: 150px;
+}
+
+/* Error list spacing */
+.errors-list > * + * {
+  margin-top: 1rem;
+}
+
+/* Individual error item */
+.error-item {
+  padding: 1.25rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-base);
+  transition: all var(--transition-fast);
+}
+
+/* Error item hover effects */
+.error-item:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Critical error severity */
+.error-item.severity-critical {
+  border-left: 4px solid #dc2626;
+}
+
+/* High error severity */
+.error-item.severity-high {
+  border-left: 4px solid #ea580c;
+}
+
+/* Medium error severity */
+.error-item.severity-medium {
+  border-left: 4px solid #ca8a04;
+}
+
+/* Low error severity */
+.error-item.severity-low {
+  border-left: 4px solid #16a34a;
+}
+
+/* Error item header */
+.error-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+/* Error title */
+.error-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+/* Error timestamp */
+.error-timestamp {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+}
+
+/* Error message content */
+.error-message {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+/* Error metadata container */
+.error-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  flex-wrap: wrap;
+}
+
+/* Error metadata tags */
+.error-component,
+.error-operation,
+.error-category {
+  padding: 0.25rem 0.5rem;
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-sm);
+}
+
+/* ======================================================================= */
+/* PERFORMANCE MONITORING DASHBOARD                                        */
+/* ======================================================================= */
+
+/**
+ * Performance Dashboard
+ * Real-time performance monitoring with charts, metrics,
+ * and performance issue detection and recommendations.
+ */
+
+/* Performance monitoring container */
+.performance-dashboard {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+}
+
+/* Performance charts section */
+.performance-charts {
+  margin-bottom: 2rem;
+}
+
+/* Individual performance chart */
+.performance-chart {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-base);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Chart title styling */
+.chart-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
+}
+
+/* Performance issues section */
+.performance-issues {
+  margin-bottom: 2rem;
+}
+
+/* Individual performance issue */
+.performance-issue {
+  padding: 1rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-base);
+  margin-bottom: 1rem;
+}
+
+/* Critical performance issue */
+.performance-issue.severity-critical {
+  border-left: 4px solid #dc2626;
+}
+
+/* High severity performance issue */
+.performance-issue.severity-high {
+  border-left: 4px solid #ea580c;
+}
+
+/* Medium severity performance issue */
+.performance-issue.severity-medium {
+  border-left: 4px solid #ca8a04;
+}
+
+/* Performance issue title */
+.issue-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+/* Performance issue description */
+.issue-description {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+/* Performance improvement suggestions */
+.issue-suggestions {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+/* ======================================================================= */
+/* MEMORY LEAK DETECTION DASHBOARD                                         */
+/* ======================================================================= */
+
+/**
+ * Memory Dashboard
+ * Memory usage monitoring and leak detection interface with
+ * real-time metrics and diagnostic information.
+ */
+
+/* Memory monitoring container */
+.memory-dashboard {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+}
+
+/* Memory metrics overview grid */
+.memory-overview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* Individual memory metric card */
+.memory-metric {
+  text-align: center;
+  padding: 1rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-base);
+}
+
+/* Memory metric value */
+.memory-value {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin-bottom: 0.25rem;
+}
+
+/* Memory metric label */
+.memory-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Memory leaks section */
+.memory-leaks {
+  margin-bottom: 2rem;
+}
+
+/* Individual memory leak detection */
+.memory-leak {
+  padding: 1rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-base);
+  margin-bottom: 1rem;
+  border-left: 4px solid #ef4444;
+}
+
+/* Memory leak title */
+.leak-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  margin-bottom: 0.5rem;
+}
+
+/* Memory leak evidence */
+.leak-evidence {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin-bottom: 0.5rem;
+}
+
+/* ======================================================================= */
+/* LOGGING DASHBOARD                                                       */
+/* ======================================================================= */
+
+/**
+ * Logs Dashboard
+ * Comprehensive logging interface with filtering, real-time updates,
+ * and color-coded log levels for effective debugging.
+ */
+
+/* Logs dashboard container */
+.logs-dashboard {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+}
+
+/* Log filtering controls */
+.logs-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Filter control sizing */
+.logs-filters .form-control {
+  min-width: 120px;
+}
+
+/* Log viewer container */
+.logs-viewer {
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--radius-base);
+  padding: 1rem;
+  max-height: 500px;
+  overflow-y: auto;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: var(--font-size-xs);
+  line-height: 1.4;
+}
+
+/* Individual log entry */
+.log-entry {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--color-border-tertiary);
+}
+
+/* Last log entry without border */
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+/* Log level color coding */
+.log-entry.level-trace { color: #6b7280; }
+.log-entry.level-debug { color: #3b82f6; }
+.log-entry.level-info { color: var(--color-text-primary); }
+.log-entry.level-warn { color: #f59e0b; }
+.log-entry.level-error { color: #ef4444; }
+.log-entry.level-critical {
+  color: #dc2626;
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Log timestamp styling */
+.log-timestamp {
+  color: var(--color-text-tertiary);
+  margin-right: 0.5rem;
+}
+
+/* Log level indicator */
+.log-level {
+  display: inline-block;
+  width: 60px;
+  text-align: center;
+  margin-right: 0.5rem;
+  font-weight: var(--font-weight-medium);
+}
+
+/* Log component identifier */
+.log-component {
+  color: var(--color-primary);
+  margin-right: 0.5rem;
+}
+
+/* Log message content */
+.log-message {
+  color: var(--color-text-primary);
+}
+
+/* ======================================================================= */
+/* MONITORING SETTINGS                                                     */
+/* ======================================================================= */
+
+/**
+ * Settings Dashboard
+ * Configuration interface for monitoring parameters, thresholds,
+ * and notification preferences with organized sections.
+ */
+
+/* Monitoring settings container */
+.monitoring-settings {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+}
+
+/* Settings section grouping */
+.settings-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+
+/* Last settings section without border */
+.settings-section:last-of-type {
+  border-bottom: none;
+}
+
+/* Settings section titles */
+.settings-section h3 {
+  margin: 0 0 1rem 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Settings grid layout */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+/* Individual setting item */
+.setting-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Setting labels */
+.setting-item label {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Setting input controls */
+.setting-item input,
+.setting-item select {
+  padding: 0.5rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--radius-base);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+}
+
+/* Checkbox input styling */
+.setting-item input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+/* Settings action buttons */
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+/* ======================================================================= */
+/* RESPONSIVE DESIGN                                                       */
+/* ======================================================================= */
+
+/**
+ * Mobile and Tablet Optimizations
+ * Responsive breakpoints for optimal monitoring interface viewing
+ * on all device sizes with touch-friendly interactions.
+ */
+
+/* Tablet and small desktop breakpoint */
+@media (max-width: 768px) {
+  /* Stack header elements vertically */
+  .monitoring-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  /* Center action buttons */
+  .monitoring-actions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Reduce health cards to 2 columns */
+  .health-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Stack filter controls vertically */
+  .errors-filters,
+  .logs-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Stack error headers vertically */
+  .error-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+
+  /* Stack error metadata vertically */
+  .error-meta {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  /* Single column settings grid */
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Stack settings actions vertically */
+  .settings-actions {
+    flex-direction: column;
+  }
+}
+
+/* Mobile phone breakpoint */
+@media (max-width: 480px) {
+  /* Single column health cards */
+  .health-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Single column memory overview */
+  .memory-overview {
+    grid-template-columns: 1fr;
+  }
+}
