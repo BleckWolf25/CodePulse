@@ -1,26 +1,11 @@
-# .vscodeignore
 .vscode/**
-node_modules/**
-**/node_modules/mocha/**
+.vscode-test/**
 src/**
-out/**
-**/*.ts
-!**/*.js.map
-.esbuild.js
-**/*.test.*
-**/test/**
 .gitignore
-.eslint*
-.prettier*
-tsconfig.json
-*.code-workspace
-yarn.lock
-package-lock.json
-coverage/**
-**/coverage/**
-
-
-# Keep these
-!dist/
-!resources/
-!src/web/
+.yarnrc
+vsc-extension-quickstart.md
+**/tsconfig.json
+**/eslint.config.mjs
+**/*.map
+**/*.ts
+**/.vscode-test.*

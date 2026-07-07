@@ -1,452 +1,101 @@
 {
-  "name": "code-pulse",
-  "displayName": "Code Pulse - DPD",
-  "description": "Code Pulse is an extension to keep track of your productivity and coding patterns to help you out.",
+  "name": "codepulse",
+  "displayName": "CodePulse",
+  "description": "Local code complexity tracking and analytics.",
   "version": "2.0.0",
-  "publisher": "BleckWolf25",
-  "author": "BleckWolf25",
+  "author": "João Costa <joao.coutinho08@gmail.com>",
   "license": "MIT",
-  "engines": {
-    "vscode": "^1.100.0",
-    "node": ">=22.0.0 <23.0.0"
-  },
-  "vscode": {
-    "publisher": "BleckWolf25",
-    "categories": [
-      "Other",
-      "Programming Languages",
-      "Linters",
-      "Visualization"
-    ],
-    "icon": "resources/icons/CP_original.jpg",
-    "galleryBanner": {
-      "color": "#1e1e1e",
-      "theme": "dark"
-    },
-    "repository": {
-      "type": "git",
-      "url": "https://github.com/BleckWolf25/CodePulse.git"
-    }
-  },
-  "icon": "resources/icons/CP_original.jpg",
+  "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/BleckWolf25/CodePulse.git"
+    "url": "git+https://github.com/BleckWolf25/CodePulse.git"
   },
-  "keywords": [
-    "productivity",
-    "metrics",
-    "code-analysis",
-    "developer-tools"
-  ],
+  "bugs": {
+    "url": "https://github.com/BleckWolf25/CodePulse/issues"
+  },
+  "engines": {
+    "vscode": "^1.125.0",
+    "node": "24.x",
+    "pnpm": ">=9.0.0"
+  },
   "categories": [
-    "Other",
-    "Programming Languages",
-    "Linters",
-    "Visualization"
+    "Other"
   ],
-  "capabilities": {
-    "untrustedWorkspaces": {
-      "supported": "limited",
-      "description": "Only basic metrics tracking is available in untrusted workspaces"
-    }
-  },
-  "activationEvents": [
-    "onStartupFinished"
-  ],
-  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "main": "./out/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "codepulse.helloWorld",
+        "title": "Hello World"
+      }
+    ],
     "configuration": {
-      "title": "Code Pulse - Developer Productivity Dashboard",
+      "title": "CodePulse",
       "properties": {
-        "productivityDashboard.enableMetricTracking": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable or disable metric tracking**\n\nWhen enabled, the extension will track your coding activity, complexity metrics, and productivity patterns.",
-          "scope": "window",
-          "order": 1
-        },
-        "productivityDashboard.complexityThreshold": {
-          "type": "number",
-          "default": 10,
-          "minimum": 1,
-          "maximum": 100,
-          "markdownDescription": "**Global complexity threshold for warnings**\n\nCode with complexity above this threshold will trigger warnings. This can be overridden per language.",
-          "scope": "window",
-          "order": 2
-        },
-        "productivityDashboard.trackingInterval": {
-          "type": "number",
-          "default": 30,
-          "minimum": 1,
-          "maximum": 1440,
-          "markdownDescription": "**Tracking interval in minutes**\n\nHow often the extension collects and processes metrics data.",
-          "scope": "window",
-          "order": 3
-        },
-        "productivityDashboard.excludedLanguages": {
+        "codepulse.exclude": {
           "type": "array",
           "items": {
             "type": "string"
           },
           "default": [
-            "json",
-            "lock"
+            "**/node_modules/**",
+            "**/dist/**",
+            "**/build/**",
+            "**/.git/**",
+            "**/__pycache__/**",
+            "**/.venv/**"
           ],
-          "markdownDescription": "**File types to exclude from tracking**\n\nSpecify file extensions or language IDs to exclude from metrics collection.",
-          "scope": "window",
-          "order": 4
+          "description": "Glob patterns for files/folders to exclude from analysis."
         },
-        "productivityDashboard.enableDetailedLogging": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "**Enable detailed debug logging**\n\n⚠️ **Warning**: This may impact performance and should only be enabled for troubleshooting.",
-          "scope": "window",
-          "order": 5
-        },
-        "productivityDashboard.complexityThresholds": {
-          "type": "object",
-          "default": {
-            "typescript": 15,
-            "javascript": 12,
-            "python": 20,
-            "java": 15,
-            "csharp": 15,
-            "cpp": 20,
-            "go": 15,
-            "rust": 15,
-            "php": 12,
-            "ruby": 12
-          },
-          "markdownDescription": "**Language-specific complexity thresholds**\n\nOverride the global complexity threshold for specific programming languages.",
-          "scope": "window",
-          "order": 6
-        },
-        "productivityDashboard.languageConfigs": {
-          "type": "object",
-          "default": {},
-          "markdownDescription": "**Advanced language-specific configurations**\n\nDetailed configuration for complexity analysis weights, thresholds, and options per language.",
-          "scope": "window",
-          "order": 7
-        },
-        "productivityDashboard.dataRetentionDays": {
-          "type": "number",
-          "default": 90,
-          "minimum": 1,
-          "maximum": 365,
-          "markdownDescription": "**Number of days to retain metrics data**\n\n📊 Longer retention periods provide better historical analysis but use more storage space.",
-          "scope": "window",
-          "order": 8
-        },
-        "productivityDashboard.maxStorageSize": {
-          "type": "number",
-          "default": 100,
-          "minimum": 1,
-          "maximum": 1000,
-          "markdownDescription": "**Maximum storage size in MB**\n\n💾 Limits the amount of disk space used for metrics storage.",
-          "scope": "window",
-          "order": 9
-        },
-        "productivityDashboard.theme": {
+        "codepulse.trigger": {
           "type": "string",
           "enum": [
-            "auto",
-            "light",
-            "dark"
+            "onSave",
+            "onType",
+            "manual"
           ],
-          "default": "auto",
-          "markdownDescription": "**Dashboard theme preference**\n\n- `auto`: Follow VS Code theme\n- `light`: Always use light theme\n- `dark`: Always use dark theme",
-          "scope": "window",
-          "order": 10
+          "default": "onSave",
+          "description": "When to trigger code complexity analysis.",
+          "enumDescriptions": [
+            "Analyze on file save.",
+            "Analyze while typing (with debounce).",
+            "Only analyze when manually triggered."
+          ]
         },
-        "productivityDashboard.enableNotifications": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable extension notifications**\n\nShow notifications for important events, warnings, and updates.",
-          "scope": "window",
-          "order": 11
-        },
-        "productivityDashboard.websocket.enabled": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable WebSocket for real-time updates**\n\n🔄 Provides real-time synchronization between the extension and dashboard views.",
-          "scope": "window",
-          "order": 12
-        },
-        "productivityDashboard.websocket.fallbackToPolling": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Fallback to polling if WebSocket fails**\n\n🔄 Automatically switch to polling mode if WebSocket connection fails.",
-          "scope": "window",
-          "order": 13
-        },
-        "productivityDashboard.websocket.updateInterval": {
+        "codepulse.debounceDelay": {
           "type": "number",
-          "default": 1000,
-          "minimum": 100,
+          "default": 2000,
+          "minimum": 500,
           "maximum": 10000,
-          "markdownDescription": "**WebSocket update interval in milliseconds**\n\n⚡ Lower values provide more responsive updates but may impact performance.",
-          "scope": "window",
-          "order": 14
-        },
-        "productivityDashboard.websocket.maxClients": {
-          "type": "number",
-          "default": 10,
-          "minimum": 1,
-          "maximum": 100,
-          "markdownDescription": "**Maximum number of WebSocket clients**\n\n👥 Limits concurrent dashboard connections to prevent resource exhaustion.",
-          "scope": "window",
-          "order": 15
-        },
-        "productivityDashboard.websocket.pingInterval": {
-          "type": "number",
-          "default": 30000,
-          "minimum": 5000,
-          "maximum": 300000,
-          "markdownDescription": "**WebSocket ping interval in milliseconds**\n\n💓 How often to send keep-alive pings to maintain connection.",
-          "scope": "window",
-          "order": 16
-        },
-        "productivityDashboard.websocket.connectionTimeout": {
-          "type": "number",
-          "default": 60000,
-          "minimum": 10000,
-          "maximum": 300000,
-          "markdownDescription": "**WebSocket connection timeout in milliseconds**\n\n⏱️ Maximum time to wait for connection establishment.",
-          "scope": "window",
-          "order": 17
-        },
-        "productivityDashboard.analytics.enableAdvancedAnalytics": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable advanced analytics features**\n\n📈 Provides detailed insights into coding patterns and productivity trends.",
-          "scope": "window",
-          "order": 18
-        },
-        "productivityDashboard.analytics.enableTrendAnalysis": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable trend analysis**\n\n📊 Analyzes productivity trends over time to identify patterns.",
-          "scope": "window",
-          "order": 19
-        },
-        "productivityDashboard.analytics.enablePerformanceBenchmarking": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable performance benchmarking**\n\n🏆 Compares your performance against historical data and best practices.",
-          "scope": "window",
-          "order": 20
-        },
-        "productivityDashboard.analytics.enableTeamMetrics": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "**Enable team collaboration metrics**\n\n👥 Tracks team-wide productivity metrics (requires team setup).",
-          "scope": "window",
-          "order": 21
-        },
-        "productivityDashboard.analytics.enableCodeHealthScoring": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable code health scoring**\n\n🏥 Provides overall code quality and maintainability scores.",
-          "scope": "window",
-          "order": 22
-        },
-        "productivityDashboard.analytics.enableHistoricalAnalysis": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable historical data analysis**\n\n📚 Analyzes long-term trends and patterns in your coding behavior.",
-          "scope": "window",
-          "order": 23
-        },
-        "productivityDashboard.analytics.enableRegressionDetection": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable performance regression detection**\n\n🔍 Automatically detects when productivity or code quality decreases.",
-          "scope": "window",
-          "order": 24
-        },
-        "productivityDashboard.analytics.enableProductivityPatterns": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable productivity pattern recognition**\n\n🧠 Identifies patterns in your most productive coding sessions.",
-          "scope": "window",
-          "order": 25
-        },
-        "productivityDashboard.dashboard.enableDrillDown": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable drill-down capabilities in charts**\n\n🔍 Click on chart elements to view detailed breakdowns.",
-          "scope": "window",
-          "order": 26
-        },
-        "productivityDashboard.dashboard.enableFiltering": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable filtering and search functionality**\n\n🔎 Filter dashboard data by date ranges, languages, and other criteria.",
-          "scope": "window",
-          "order": 27
-        },
-        "productivityDashboard.dashboard.enableExport": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable export options for different formats**\n\n💾 Export dashboard data as CSV, JSON, or PDF reports.",
-          "scope": "window",
-          "order": 28
-        },
-        "productivityDashboard.dashboard.enableGoalTracking": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable goal setting and tracking features**\n\n🎯 Set and track productivity goals with progress indicators.",
-          "scope": "window",
-          "order": 29
-        },
-        "productivityDashboard.dashboard.refreshInterval": {
-          "type": "number",
-          "default": 5000,
-          "minimum": 1000,
-          "maximum": 60000,
-          "markdownDescription": "**Dashboard refresh interval in milliseconds**\n\n🔄 How often the dashboard updates its data display.",
-          "scope": "window",
-          "order": 30
-        },
-        "productivityDashboard.reporting.enablePDFReports": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "**Enable PDF report generation**\n\n📄 Generate comprehensive PDF reports of your productivity metrics.",
-          "scope": "window",
-          "order": 31
-        },
-        "productivityDashboard.reporting.enableScheduledReports": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "**Enable scheduled reports**\n\n📅 Automatically generate and send reports at specified intervals.",
-          "scope": "window",
-          "order": 32
-        },
-        "productivityDashboard.reporting.enableTeamReports": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "**Enable team summary reports**\n\n👥 Generate reports summarizing team-wide productivity metrics.",
-          "scope": "window",
-          "order": 33
-        },
-        "productivityDashboard.reporting.enableCIIntegration": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "**Enable CI/CD integration reports**\n\n🔧 Integrate productivity metrics with your CI/CD pipeline.",
-          "scope": "window",
-          "order": 34
-        },
-        "productivityDashboard.configVersion": {
-          "type": "string",
-          "default": "2.0.0",
-          "markdownDescription": "**Configuration version**\n\nInternal configuration version for migration purposes.",
-          "scope": "window",
-          "order": 35
-        },
-        "productivityDashboard.websocket": {
-          "type": "object",
-          "default": {},
-          "markdownDescription": "**WebSocket configuration**\n\nAdvanced WebSocket server configuration.",
-          "scope": "window",
-          "order": 36
-        },
-        "productivityDashboard.analytics": {
-          "type": "object",
-          "default": {},
-          "markdownDescription": "**Analytics configuration**\n\nAdvanced analytics configuration.",
-          "scope": "window",
-          "order": 37
-        },
-        "productivityDashboard.dashboard": {
-          "type": "object",
-          "default": {},
-          "markdownDescription": "**Dashboard configuration**\n\nAdvanced dashboard configuration.",
-          "scope": "window",
-          "order": 38
-        },
-        "productivityDashboard.reporting": {
-          "type": "object",
-          "default": {},
-          "markdownDescription": "**Reporting configuration**\n\nAdvanced reporting configuration.",
-          "scope": "window",
-          "order": 39
+          "description": "Debounce delay in milliseconds when trigger is set to 'onType'."
         }
       }
-    },
-    "commands": [
-      {
-        "command": "productivityDashboard.show",
-        "title": "Show Productivity Dashboard",
-        "category": "CodePulse"
-      },
-      {
-        "command": "productivityDashboard.exportMetrics",
-        "title": "Export Productivity Metrics",
-        "category": "CodePulse"
-      },
-      {
-        "command": "productivityDashboard.clearMetrics",
-        "title": "Clear All Productivity Metrics",
-        "category": "CodePulse"
-      },
-      {
-        "command": "productivityDashboard.toggleTracking",
-        "title": "Toggle Productivity Tracking",
-        "category": "CodePulse"
-      },
-      {
-        "command": "productivityDashboard.exportConfig",
-        "title": "Export Configuration",
-        "category": "CodePulse"
-      },
-      {
-        "command": "productivityDashboard.toggleWebSocket",
-        "title": "Toggle WebSocket Server",
-        "category": "CodePulse"
-      }
-    ]
+    }
   },
   "scripts": {
-    "vscode:prepublish": "npm run package",
-    "compile": "npm run check-types && npm run lint && node esbuild.js",
-    "watch": "npm-run-all -p watch:esbuild watch:tsc",
-    "watch:esbuild": "node esbuild.js --watch",
-    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-    "package": "npm run compile -- --production",
-    "compile-tests": "tsc -p . --outDir out",
-    "pretest": "npm run compile-tests && npm run compile && npm run lint",
-    "check-types": "tsc --noEmit",
-    "lint": "eslint src --ext ts",
-    "lint:fix": "eslint src --ext ts --fix",
-    "test": "npm run pretest && vscode-test",
-    "vsce": "vsce package"
+    "vscode:prepublish": "pnpm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "pnpm run compile && pnpm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^24.1.0",
-    "@types/vscode": "^1.100.0",
-    "@types/ws": "^8.18.1",
-    "@typescript-eslint/eslint-plugin": "^8.38.0",
-    "@typescript-eslint/parser": "^8.38.0",
-    "@vscode/test-cli": "^0.0.11",
-    "@vscode/test-electron": "^2.5.2",
-    "@vscode/vsce": "^3.6.0",
-    "esbuild": "^0.25.8",
-    "esbuild-node-externals": "^1.18.0",
-    "eslint": "^9.31.0",
-    "npm-run-all": "^4.1.5",
-    "nyc": "^17.1.0",
-    "typescript": "^5.8.3"
+    "@types/node": "24.x",
+    "@types/vscode": "^1.125.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.0.0",
+    "eslint": "^10.5.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1"
   },
-  "dependencies": {
-    "@vscode/vsce-sign": "^2.0.6",
-    "acorn-walk": "^8.3.4",
-    "chart.js": "^4.5.0",
-    "typescript": ">=4.4.0",
-    "ws": "^8.18.3"
-  },
-  "peerDependencies": {
-    "typescript": ">=4.4.0"
+  "overrides": {
+    "diff": "^8.0.4",
+    "serialize-javascript": "^7.0.6"
   }
 }
