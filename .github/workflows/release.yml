@@ -40,10 +40,10 @@ jobs:
         run: |
           VERSION=${GITHUB_REF#refs/tags/v}
           echo "Extracting release notes for version $VERSION"
-          
+
           # Match lines starting from ## [VERSION] or ## VERSION until the next ## header
           sed -n "/## \[\{0,1\}$VERSION\]\{0,1\}/,/## /p" CHANGELOG.md | grep -v '## ' > release_notes.md
-          
+
           if [ ! -s release_notes.md ]; then
             echo "No release notes found for version $VERSION in CHANGELOG.md. Using fallback."
             echo "Release version $VERSION" > release_notes.md
@@ -59,7 +59,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to VS Code Marketplace
-        if: env.VSCE_PAT != ''
-        run: npx @vscode/vsce publish -p ${{ secrets.VSCE_PAT }} --no-dependencies
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          if [ -n "$VSCE_PAT" ]; then
+            PACKAGE_FILE=$(ls *.vsix | head -n 1)
+            if [ -n "$PACKAGE_FILE" ]; then
+              npx @vscode/vsce publish --pat "$VSCE_PAT" --packagePath "$PACKAGE_FILE" --no-dependencies
+            else
+              echo "No VSIX package found; skipping Marketplace publish."
+            fi
+          else
+            echo "VSCE_PAT not set; skipping Marketplace publish."
+          fi
