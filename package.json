@@ -8,6 +8,7 @@
     "publisher": "extbleckwolf25",
     "license": "MIT",
     "type": "module",
+    "packageManager": "pnpm@9.15.0",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/BleckWolf25/CodePulse.git"
