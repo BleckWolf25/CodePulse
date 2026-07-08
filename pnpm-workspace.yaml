@@ -1,11 +1,11 @@
 allowBuilds:
   core-js: true
   esbuild: true
-  tree-sitter-c: set this to true or false
-  tree-sitter-cpp: set this to true or false
-  tree-sitter-go: set this to true or false
-  tree-sitter-java: set this to true or false
+  tree-sitter-c: true
+  tree-sitter-cpp: true
+  tree-sitter-go: true
+  tree-sitter-java: true
   tree-sitter-javascript: true
   tree-sitter-python: true
-  tree-sitter-rust: set this to true or false
+  tree-sitter-rust: true
   tree-sitter-typescript: true
