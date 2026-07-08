@@ -110,7 +110,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
-        "@sveltejs/vite-plugin-svelte": "^5.0.0",
+        "@sveltejs/vite-plugin-svelte": "^6.2.4",
         "@types/mocha": "^10.0.10",
         "@types/node": "24.x",
         "@types/vscode": "^1.125.0",
