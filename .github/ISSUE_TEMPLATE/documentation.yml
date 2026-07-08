@@ -1,0 +1,28 @@
+name: 📝 Documentation Update
+description: Suggest improvements or report issues with CodePulse documentation
+title: "[DOCS]: "
+labels: ["documentation"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us make our documentation better!
+  
+  - type: textarea
+    id: issue
+    attributes:
+      label: What needs improvement?
+      description: What part of the documentation is inaccurate, missing, or unclear?
+      placeholder: E.g., The README contains an outdated script command...
+    validations:
+      required: true
+
+  - type: textarea
+    id: changes
+    attributes:
+      label: Proposed Changes
+      description: Describe the changes you would like to see made.
+      placeholder: What should the documentation say instead...
+    validations:
+      required: true

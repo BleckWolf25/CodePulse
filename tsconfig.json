@@ -6,7 +6,7 @@
         "target": "ES2022",
         "outDir": "out",
         "rootDir": "src",
-        "lib": ["ES2022"],
+        "lib": ["ES2022", "DOM"],
         "types": ["node", "mocha", "@types/node"],
         "sourceMap": true,
 
@@ -21,11 +21,10 @@
         "noImplicitOverride": true,
         "exactOptionalPropertyTypes": true,
 
-        /* Advanced Checks */
+        // Advanced Checks
         "forceConsistentCasingInFileNames": true,
         "skipLibCheck": true
-
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules", ".vscode-test"]
+    "exclude": ["node_modules", ".vscode-test", "src/test/mocks"]
 }

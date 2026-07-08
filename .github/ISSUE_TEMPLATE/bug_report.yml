@@ -1,0 +1,59 @@
+name: 🐛 Bug Report
+description: Report a bug or error in CodePulse
+title: "[BUG]: "
+labels: ["bug"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a bug! Please fill out the form below to help us investigate and fix it.
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+      placeholder: Describe what happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Open file '...'
+        2. Type '...'
+        3. See error '...'
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: A clear and concise description of what you expected to happen.
+      placeholder: What should have happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Info
+      description: OS version, VS Code version, Node.js and Extension version.
+      placeholder: |
+        - OS: Windows 11 / WSL Ubuntu
+        - VS Code Version: 1.128.0
+        - CodePulse Version: 2.0.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Additional Logs & Screenshots
+      description: Paste any relevant error logs (from Help > Toggle Developer Tools) or upload screenshots.
+      placeholder: Paste console output here...

@@ -1,101 +1,144 @@
 {
-  "name": "codepulse",
-  "displayName": "CodePulse",
-  "description": "Local code complexity tracking and analytics.",
-  "version": "2.0.0",
-  "author": "João Costa <joao.coutinho08@gmail.com>",
-  "license": "MIT",
-  "type": "module",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/BleckWolf25/CodePulse.git"
-  },
-  "bugs": {
-    "url": "https://github.com/BleckWolf25/CodePulse/issues"
-  },
-  "engines": {
-    "vscode": "^1.125.0",
-    "node": "24.x",
-    "pnpm": ">=9.0.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [],
-  "main": "./out/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "codepulse.helloWorld",
-        "title": "Hello World"
-      }
+    "name": "codepulse",
+    "displayName": "CodePulse",
+    "description": "Local code complexity tracking and analytics.",
+    "version": "2.0.0",
+    "icon": "icon.png",
+    "author": "João Costa <joao.coutinho08@gmail.com>",
+    "license": "MIT",
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/BleckWolf25/CodePulse.git"
+    },
+    "bugs": {
+        "url": "https://github.com/BleckWolf25/CodePulse/issues"
+    },
+    "engines": {
+        "vscode": "^1.125.0",
+        "node": "24.x",
+        "pnpm": ">=9.0.0"
+    },
+    "categories": [
+        "Other"
     ],
-    "configuration": {
-      "title": "CodePulse",
-      "properties": {
-        "codepulse.exclude": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": [
-            "**/node_modules/**",
-            "**/dist/**",
-            "**/build/**",
-            "**/.git/**",
-            "**/__pycache__/**",
-            "**/.venv/**"
-          ],
-          "description": "Glob patterns for files/folders to exclude from analysis."
-        },
-        "codepulse.trigger": {
-          "type": "string",
-          "enum": [
-            "onSave",
-            "onType",
-            "manual"
-          ],
-          "default": "onSave",
-          "description": "When to trigger code complexity analysis.",
-          "enumDescriptions": [
-            "Analyze on file save.",
-            "Analyze while typing (with debounce).",
-            "Only analyze when manually triggered."
-          ]
-        },
-        "codepulse.debounceDelay": {
-          "type": "number",
-          "default": 2000,
-          "minimum": 500,
-          "maximum": 10000,
-          "description": "Debounce delay in milliseconds when trigger is set to 'onType'."
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "codepulse.openDashboard",
+                "title": "CodePulse: Open Dashboard"
+            },
+            {
+                "command": "codepulse.exportJson",
+                "title": "CodePulse: Export Metrics as JSON"
+            },
+            {
+                "command": "codepulse.exportCsv",
+                "title": "CodePulse: Export Metrics as CSV"
+            },
+            {
+                "command": "codepulse.purgeLogs",
+                "title": "CodePulse: Purge Old Logs"
+            }
+        ],
+        "configuration": {
+            "title": "CodePulse",
+            "properties": {
+                "codepulse.exclude": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": [
+                        "**/node_modules/**",
+                        "**/dist/**",
+                        "**/build/**",
+                        "**/out/**",
+                        "**/.next/**",
+                        "**/coverage/**",
+                        "**/*.d.ts",
+                        "**/*.min.js",
+                        "**/.git/**",
+                        "**/__pycache__/**",
+                        "**/.venv/**"
+                    ],
+                    "description": "Glob patterns for files/folders to exclude from analysis."
+                },
+                "codepulse.trigger": {
+                    "type": "string",
+                    "enum": [
+                        "onSave",
+                        "onType",
+                        "manual"
+                    ],
+                    "default": "onSave",
+                    "description": "When to trigger code complexity analysis.",
+                    "enumDescriptions": [
+                        "Analyze on file save.",
+                        "Analyze while typing (with debounce).",
+                        "Only analyze when manually triggered."
+                    ]
+                },
+                "codepulse.debounceDelay": {
+                    "type": "number",
+                    "default": 2000,
+                    "minimum": 500,
+                    "maximum": 10000,
+                    "description": "Debounce delay in milliseconds when trigger is set to 'onType'."
+                },
+                "codepulse.retentionDays": {
+                    "type": "number",
+                    "default": 30,
+                    "minimum": 1,
+                    "description": "Retention period in days for historical metrics. Logs older than this can be purged."
+                }
+            }
         }
-      }
+    },
+    "scripts": {
+        "vscode:prepublish": "pnpm run compile",
+        "compile": "tsc -p ./ && pnpm exec vite build --config ./src/webview/vite.config.ts",
+        "watch": "tsc -watch -p ./",
+        "pretest": "pnpm run compile && pnpm run lint",
+        "lint": "eslint src",
+        "test": "vscode-test"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "@sveltejs/vite-plugin-svelte": "^5.0.0",
+        "@types/mocha": "^10.0.10",
+        "@types/node": "24.x",
+        "@types/vscode": "^1.125.0",
+        "@vscode/test-cli": "^0.0.15",
+        "@vscode/test-electron": "^3.0.0",
+        "chart.js": "^4.4.6",
+        "eslint": "^10.5.0",
+        "eslint-config-prettier": "^10.1.8",
+        "prettier": "^3.9.4",
+        "svelte": "^5.0.0",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.61.1",
+        "vite": "^6.0.0"
+    },
+    "overrides": {
+        "diff": "^8.0.4",
+        "serialize-javascript": "^7.0.6"
+    },
+    "dependencies": {
+        "jspdf": "^4.2.1",
+        "sql.js": "^1.14.1",
+        "tree-sitter-c": "^0.24.1",
+        "tree-sitter-cpp": "^0.23.4",
+        "tree-sitter-go": "^0.25.0",
+        "tree-sitter-java": "^0.23.5",
+        "tree-sitter-javascript": "^0.25.0",
+        "tree-sitter-python": "^0.25.0",
+        "tree-sitter-rust": "^0.24.0",
+        "tree-sitter-typescript": "^0.23.2",
+        "web-tree-sitter": "^0.26.10"
     }
-  },
-  "scripts": {
-    "vscode:prepublish": "pnpm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "pnpm run compile && pnpm run lint",
-    "lint": "eslint src",
-    "test": "vscode-test"
-  },
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "24.x",
-    "@types/vscode": "^1.125.0",
-    "@vscode/test-cli": "^0.0.15",
-    "@vscode/test-electron": "^3.0.0",
-    "eslint": "^10.5.0",
-    "eslint-config-prettier": "^10.1.8",
-    "prettier": "^3.9.4",
-    "typescript": "^6.0.3",
-    "typescript-eslint": "^8.61.1"
-  },
-  "overrides": {
-    "diff": "^8.0.4",
-    "serialize-javascript": "^7.0.6"
-  }
 }

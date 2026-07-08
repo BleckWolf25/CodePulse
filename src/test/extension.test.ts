@@ -1,15 +1,41 @@
+/**
+ * @file extension.test.ts
+ *
+ * @version 1.0.0
+ * @author BleckWolf25
+ * @license MIT
+ *
+ * @summary Extension integration tests for CodePulse.
+ *
+ * @description
+ * Tests the CodePulse extension's singleton instantiation and command registration.
+ *
+ * @since 08/07/2026
+ * @updated 08/07/2026
+ */
+// ---------- IMPORTS
 import * as assert from 'assert';
-
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
 import * as vscode from 'vscode';
-// import * as myExtension from '../../extension';
+import { DatabaseManager } from '../database/database.js';
 
-suite('Extension Test Suite', () => {
-	vscode.window.showInformationMessage('Start all tests.');
+// ---------- TEST SUITE
 
-	test('Sample test', () => {
-		assert.strictEqual(-1, [1, 2, 3].indexOf(5));
-		assert.strictEqual(-1, [1, 2, 3].indexOf(0));
-	});
+suite('CodePulse Extension Test Suite', () => {
+    vscode.window.showInformationMessage('Running CodePulse Extension Tests...');
+
+    test('DatabaseManager Singleton instantiation', () => {
+        const db1 = DatabaseManager.getInstance();
+        const db2 = DatabaseManager.getInstance();
+        assert.strictEqual(db1, db2, 'DatabaseManager should be a singleton');
+    });
+
+    test('Extension registered commands list', async () => {
+        const commands = await vscode.commands.getCommands(true);
+        const codePulseCommands = commands.filter((c) => c.startsWith('codepulse.'));
+
+        assert.ok(codePulseCommands.includes('codepulse.openDashboard'), 'codepulse.openDashboard should be registered');
+        assert.ok(codePulseCommands.includes('codepulse.exportJson'), 'codepulse.exportJson should be registered');
+        assert.ok(codePulseCommands.includes('codepulse.exportCsv'), 'codepulse.exportCsv should be registered');
+        assert.ok(codePulseCommands.includes('codepulse.purgeLogs'), 'codepulse.purgeLogs should be registered');
+    });
 });

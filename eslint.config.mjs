@@ -16,15 +16,18 @@
  * It integrates Prettier to ensure consistent code formatting across the project.
  *
  * @since 05/07/2026
- * @updated 07/07/2026
+ * @updated 08/07/2026
  */
 // ---------- IMPORTS
-import eslint from "@eslint/js";
-import tseslint from "typescript-eslint";
-import eslintConfigPrettier from "eslint-config-prettier";
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import eslintConfigPrettier from 'eslint-config-prettier';
 
 // ---------- CONFIGURATION
 export default tseslint.config(
+    {
+        ignores: ['src/test/mocks/**', 'eslint.config.mjs', '.vscode-test.mjs', 'vite.config.ts', 'src/webview/vite.config.ts'],
+    },
     eslint.configs.recommended,
     ...tseslint.configs.strictTypeChecked,
     ...tseslint.configs.stylisticTypeChecked,
@@ -35,34 +38,39 @@ export default tseslint.config(
                 tsconfigRootDir: import.meta.dirname,
             },
             ecmaVersion: 2022,
-            sourceType: "module",
+            sourceType: 'module',
         },
         rules: {
-            "@typescript-eslint/naming-convention": [
-                "error",
-                { selector: "default", format: ["camelCase"] },
-                { selector: "variable", format: ["camelCase", "UPPER_CASE"] },
-                { selector: "parameter", format: ["camelCase"], leadingUnderscore: "allow" },
-                { selector: "memberLike", modifiers: ["private"], format: ["camelCase"], leadingUnderscore: "require" },
-                { selector: "typeLike", format: ["PascalCase"] },
-                { selector: "import", format: ["camelCase", "PascalCase"] }
+            '@typescript-eslint/naming-convention': [
+                'error',
+                { selector: 'default', format: ['camelCase'] },
+                { selector: 'variable', format: ['camelCase', 'UPPER_CASE'] },
+                { selector: 'parameter', format: ['camelCase'], leadingUnderscore: 'allow' },
+                {
+                    selector: 'memberLike',
+                    modifiers: ['private'],
+                    format: ['camelCase'],
+                    leadingUnderscore: 'require',
+                },
+                { selector: 'typeLike', format: ['PascalCase'] },
+                { selector: 'import', format: ['camelCase', 'PascalCase'] },
             ],
-            "@typescript-eslint/no-explicit-any": "error",
-            "@typescript-eslint/no-floating-promises": "error",
-            "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
-            "curly": ["error", "all"],
-            "eqeqeq": ["error", "always"],
-            "no-throw-literal": "error"
-        }
+            '@typescript-eslint/no-explicit-any': 'error',
+            '@typescript-eslint/no-floating-promises': 'error',
+            '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+            curly: ['error', 'all'],
+            eqeqeq: ['error', 'always'],
+            'no-throw-literal': 'error',
+        },
     },
     {
         // Relax specific rules for test files
-        files: ["**/*.test.ts"],
+        files: ['**/*.test.ts'],
         rules: {
-            "@typescript-eslint/no-explicit-any": "off",
-            "@typescript-eslint/unbound-method": "off"
-        }
+            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/unbound-method': 'off',
+        },
     },
     // Prettier config must be the last item in the array to override conflicting rules
-    eslintConfigPrettier
+    eslintConfigPrettier,
 );

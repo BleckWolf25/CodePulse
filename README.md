@@ -1,71 +1,101 @@
-# codepulse README
+# CodePulse
 
-This is the README for your extension "codepulse". After writing up a brief description, we recommend including the following sections.
+> Local code complexity tracking and analytics VS Code extension
 
-## Features
+CodePulse is a VS Code extension that tracks cyclomatic and cognitive complexity in real-time as you write and save code. It parses your files locally using Tree-sitter WASM and stores historical trends in a lightweight SQLite database, offering actionable refactoring suggestions and interactive visual dashboards.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## 🚀 Getting Started
 
-For example if there is an image subfolder under your extension project workspace:
+### Prerequisites
 
-\!\[feature X\]\(images/feature-x.png\)
+- **Node.js** 24 or higher
+- **pnpm** 9.0.0 or higher
+- **VS Code** 1.125.0 or higher
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+### Installation
 
-## Requirements
+1. Clone the repository:
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+   ```bash
+   git clone https://github.com/BleckWolf25/CodePulse.git
+   cd CodePulse
+   ```
 
-## Extension Settings
+2. Install dependencies:
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+   ```bash
+   pnpm install
+   ```
 
-For example:
+3. Start the compilation/build process:
 
-This extension contributes the following settings:
+   ```bash
+   pnpm run compile
+   ```
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+4. Launch the extension in VS Code:
+   - Open the project in VS Code: `code .`
+   - Press `F5` to open a Development Host window with the extension loaded.
 
-## Known Issues
+## 📝 Available Scripts
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- `pnpm compile` - Compile TypeScript and build the Svelte webview using Vite
+- `pnpm watch` - Start TypeScript compiler in watch mode
+- `pnpm lint` - Run ESLint on the codebase
+- `pnpm test` - Run automated VS Code integration and unit tests
 
-## Release Notes
+## 🏗️ Project Structure
 
-Users appreciate release notes as you update your extension.
+```zsh
+CodePulse/
+├── .vscode-test/        # Compiled tests (generated)
+├── out/                 # Compiled files (generated)
+├── src/
+│   ├── database/        # SQLite/sql.js local storage manager
+│   ├── editor/          # CodeLens and Hover providers
+│   ├── parser/          # Tree-sitter WASM runtime, AST walking & complexity analyzer
+│   ├── webview/         # Svelte-based real-time analytics dashboard
+│   ├── extension.ts     # Extension lifecycle activation & message broker
+│   └── types.ts         # Shared Type definitions
+├── .editorconfig        # EditorConfig configuration
+├── .gitignore           # gitignore configuration
+├── .npmrc               # node configuration
+├── .prettierrc          # prettier configuration
+├── .vscode-test.mjs     # vscode tests configuration
+├── .vscodeignore        # vscode ignore configuration
+├── package.json
+├── tsconfig.json        # Typescript configuration
+└── eslint.config.mjs    # ESLint configuration
+```
 
-### 1.0.0
+## 🧪 Testing
 
-Initial release of ...
+The project uses VS Code test harnesses to run unit and integration tests.
 
-### 1.0.1
+### Run Unit Tests
 
-Fixed issue #.
+```bash
+pnpm test
+```
 
-### 1.1.0
+## 🤝 Contributing
 
-Added features X, Y, and Z.
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a pull request.
+
+By participating in this project, you agree to abide by our [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🔒 Security
+
+For security concerns, please review our [Security Policy](SECURITY.md).
+
+## 📧 Contact
+
+For questions or support, please open an issue on GitHub or contact [joao.coutinho08@icloud.com](mailto:joao.coutinho08@icloud.com).
 
 ---
 
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Built with ❤️ using Svelte, Vite, TypeScript, and Tree-sitter
