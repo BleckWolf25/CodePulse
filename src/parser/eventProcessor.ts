@@ -233,6 +233,9 @@ export class EventProcessor {
 
         for (const fileUri of fileUris) {
             try {
+                if (!fs.existsSync(fileUri.fsPath)) {
+                    continue;
+                }
                 const document = await vscode.workspace.openTextDocument(fileUri);
                 if (!this._shouldSkip(document)) {
                     this._processDocument(document, 'workspaceScan');

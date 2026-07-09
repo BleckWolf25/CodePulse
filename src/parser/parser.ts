@@ -15,12 +15,14 @@
  * @updated 08/07/2026
  */
 // ---------- IMPORTS
-import * as TreeSitter from 'web-tree-sitter';
-import { Language } from 'web-tree-sitter';
+import type * as TreeSitterNamespace from 'web-tree-sitter';
 import { copyWasmBinaries, getTreeSitterWasmPath } from './wasmHelper.js';
 import { computeComplexity, type ComplexityScores } from './complexityAnalyzer.js';
 import type { SupportedLanguage } from '../types.js';
 import * as vscode from 'vscode';
+
+declare const require: (id: string) => unknown;
+let treeSitterModule: typeof TreeSitterNamespace | undefined;
 
 // ---------- LANGUAGE MAPPING
 /**
@@ -45,7 +47,7 @@ const LANGUAGE_WASM_MAP: Record<string, { language: SupportedLanguage; wasmFile:
  */
 export class TreeSitterManager {
     private static _instance: TreeSitterManager | undefined;
-    private readonly _parsers = new Map<string, TreeSitter.Parser>();
+    private readonly _parsers = new Map<string, TreeSitterNamespace.Parser>();
     private _initialized = false;
 
     private constructor() {
@@ -70,9 +72,18 @@ export class TreeSitterManager {
         // 1. Copy WASM binaries to global storage
         const wasmPaths = await copyWasmBinaries(context);
 
-        // 2. Initialise the web-tree-sitter runtime
+        // 2. Lazy-load and initialise the web-tree-sitter runtime.
+        try {
+            treeSitterModule ??= require('web-tree-sitter/web-tree-sitter.cjs') as typeof TreeSitterNamespace;
+        } catch (err) {
+            const msg =
+                'The dependency "web-tree-sitter" is not available. If you installed this extension from a VSIX or the Marketplace, ensure the publisher packaged runtime dependencies. For development, run the extension from the workspace (F5) after running `pnpm install`).';
+            void vscode.window.showErrorMessage(`[CodePulse] ${msg}`);
+            throw err;
+        }
+
         const tsWasmPath = getTreeSitterWasmPath(context);
-        await TreeSitter.Parser.init({
+        await treeSitterModule.Parser.init({
             locateFile(): string {
                 return tsWasmPath;
             },
@@ -87,8 +98,8 @@ export class TreeSitterManager {
             }
 
             try {
-                const language = await Language.load(wasmPath);
-                const parser = new TreeSitter.Parser();
+                const language = await treeSitterModule.Language.load(wasmPath);
+                const parser = new treeSitterModule.Parser();
                 parser.setLanguage(language);
                 this._parsers.set(vscodeLang, parser);
             } catch (err) {

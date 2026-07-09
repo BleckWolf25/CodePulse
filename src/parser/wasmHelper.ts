@@ -101,9 +101,9 @@ export async function copyWasmBinaries(
     const wasmPaths = new Map<string, string>();
 
     for (const artifact of WASM_ARTIFACTS) {
-        // Source is inside the extension's node_modules
+        // Source is inside the extension's deps/ directory (runtime deps)
         const extensionPath = context.extensionUri.fsPath;
-        const sourcePath = path.join(extensionPath, 'node_modules', artifact.sourceRelPath);
+        const sourcePath = path.join(extensionPath, 'deps', artifact.sourceRelPath);
         const targetPath = path.join(wasmDir, artifact.targetFileName);
 
         try {
@@ -132,7 +132,7 @@ export async function copyWasmBinaries(
 export function getTreeSitterWasmPath(context: vscode.ExtensionContext): string {
     return path.join(
         context.extensionUri.fsPath,
-        'node_modules',
+        'deps',
         'web-tree-sitter',
         'web-tree-sitter.wasm',
     );
