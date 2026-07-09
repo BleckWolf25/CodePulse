@@ -12,3 +12,4 @@ allowBuilds:
   tree-sitter-python: true
   tree-sitter-rust: true
   tree-sitter-typescript: true
+  web-tree-sitter: true

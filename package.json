@@ -2,7 +2,7 @@
   "name": "codepulse-complexity",
   "displayName": "CodePulseComplexity",
   "description": "Local code complexity tracking and analytics.",
-  "version": "1.0.0",
+  "version": "3.0.1",
   "icon": "icon.png",
   "author": "João Costa <joao.coutinho08@gmail.com>",
   "publisher": "extbleckwolf25",
@@ -27,7 +27,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./out/extension.js",
+  "main": "./out/extension.cjs",
   "contributes": {
     "commands": [
       {
@@ -102,9 +102,10 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "pnpm run compile",
-    "compile": "tsc -p ./ && pnpm exec vite build --config ./src/webview/vite.config.ts",
-    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "pnpm run compile && pnpm install --shamefully-hoist && node scripts/copy-deps.mjs",
+    "compile": "node esbuild.config.mjs --production && pnpm exec vite build --config ./src/webview/vite.config.ts",
+    "watch": "node esbuild.config.mjs && pnpm exec vite build --config ./src/webview/vite.config.ts --watch",
+    "package": "pnpm exec vsce package --no-dependencies",
     "pretest": "pnpm run compile && pnpm run lint",
     "lint": "eslint src",
     "test": "vscode-test"
@@ -118,6 +119,7 @@
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.0.0",
     "chart.js": "^4.5.1",
+    "esbuild": "^0.28.0",
     "eslint": "^10.6.0",
     "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.9.4",
@@ -126,9 +128,11 @@
     "typescript-eslint": "^8.63.0",
     "vite": "^8.1.3"
   },
-  "overrides": {
-    "diff": "^8.0.4",
-    "serialize-javascript": "^7.0.6"
+  "pnpm": {
+    "overrides": {
+      "diff": "^8.0.4",
+      "serialize-javascript": "^7.0.6"
+    }
   },
   "dependencies": {
     "jspdf": "^4.2.1",

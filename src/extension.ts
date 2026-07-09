@@ -193,43 +193,53 @@ async function getStorageDir(context: vscode.ExtensionContext): Promise<string> 
     return dbPath;
 }
 
+// ---------- INITIALIZATION HELPER
+let initPromise: Promise<void> | undefined;
+
+async function ensureInitialized(context: vscode.ExtensionContext): Promise<void> {
+    initPromise ??= (async () => {
+        const storageDir = await getStorageDir(context);
+        console.log(`[CodePulse] Storage directory: ${storageDir}`);
+
+        const tsManager = TreeSitterManager.getInstance();
+        await tsManager.initialize(context);
+
+        const db = DatabaseManager.getInstance();
+        await db.initialize(storageDir);
+    })();
+    return initPromise;
+}
+
 // ---------- EXTENSION LIFECYCLE
-export async function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext) {
     console.log('[CodePulse] Activating extension...');
 
-    // 1. Resolve storage directory
-    const storageDir = await getStorageDir(context);
-    console.log(`[CodePulse] Storage directory: ${storageDir}`);
-
-    // 2. Initialise tree-sitter WASM runtime and language parsers
-    const tsManager = TreeSitterManager.getInstance();
-    await tsManager.initialize(context);
-
-    // 3. Initialise the SQLite database (load from disk or create)
-    const db = DatabaseManager.getInstance();
-    await db.initialize(storageDir);
-
-    // 4. Start the event processor (listens to file save/change events)
-    const eventProcessor = new EventProcessor();
-    eventProcessor.activate();
-
-    // 5. Register commands
+    // 1. Register commands synchronously FIRST so they are never missing
     context.subscriptions.push(
-        vscode.commands.registerCommand('codepulse.openDashboard', () => {
-            showDashboard(context);
+        vscode.commands.registerCommand('codepulse.openDashboard', async () => {
+            try {
+                await ensureInitialized(context);
+                showDashboard(context);
+            } catch (err) {
+                const msg = err instanceof Error ? err.message : String(err);
+                void vscode.window.showErrorMessage(`[CodePulse] Failed to open dashboard: ${msg}`);
+            }
         }),
-        vscode.commands.registerCommand('codepulse.exportJson', () => {
+        vscode.commands.registerCommand('codepulse.exportJson', async () => {
+            await ensureInitialized(context);
             void exportJson();
         }),
-        vscode.commands.registerCommand('codepulse.exportCsv', () => {
+        vscode.commands.registerCommand('codepulse.exportCsv', async () => {
+            await ensureInitialized(context);
             void exportCsv();
         }),
-        vscode.commands.registerCommand('codepulse.purgeLogs', () => {
+        vscode.commands.registerCommand('codepulse.purgeLogs', async () => {
+            await ensureInitialized(context);
             void purgeLogs();
         }),
     );
 
-    // 6. Register CodeLens and Hover providers
+    // 2. Register CodeLens and Hover providers synchronously
     const selector: vscode.DocumentSelector = [
         'typescript',
         'javascript',
@@ -246,16 +256,23 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.languages.registerHoverProvider(selector, new CodePulseHoverProvider()),
     );
 
-    // 7. Push dispose handlers for clean deactivation
+    // 3. Start background initialization and event processor
+    const eventProcessor = new EventProcessor();
     context.subscriptions.push({
         dispose(): void {
             eventProcessor.deactivate();
         },
     });
 
-    console.log('[CodePulse] Extension activated successfully');
-
-    showDashboard(context);
+    void ensureInitialized(context)
+        .then(() => {
+            eventProcessor.activate();
+            console.log('[CodePulse] Extension activated successfully');
+            showDashboard(context);
+        })
+        .catch((err: unknown) => {
+            console.error('[CodePulse] Extension initialization failed:', err);
+        });
 }
 
 export async function deactivate(): Promise<void> {
