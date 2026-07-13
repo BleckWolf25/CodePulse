@@ -1,24 +1,17 @@
 /**
  * @file esbuild.config.mjs
  *
- * @version 2.0.0
+ * @version 1.0.0
  * @author BleckWolf25
  * @license MIT
  *
- * @summary esbuild configuration for bundling the VS Code extension.
+ * @summary ESLint configuration for CodePulse.
  *
  * @description
- * Bundles the extension code, but keeps runtime dependencies (web-tree-sitter,
- * tree-sitter languages, sql.js, jspdf) as external modules since they need
- * their WASM files to be available at runtime.
- *
- * Runtime dependencies are shipped in the `deps/` directory (not node_modules)
- * because pnpm's symlinked node_modules are incompatible with vsce packaging.
- * The depsRewrite plugin rewrites bare imports of these packages to resolve
- * from `../deps/<package>` relative to the output file in `out/`.
+ * Strict ESLint configuration for CodePulse that ignores runtime dependencies.
  *
  * @since 09/07/2026
- * @updated 09/07/2026
+ * @updated 13/07/2026
  */
 // ---------- IMPORTS
 import esbuild from 'esbuild';
