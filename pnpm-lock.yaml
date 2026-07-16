@@ -43,8 +43,8 @@ importers:
         specifier: ^0.23.2
         version: 0.23.2
       web-tree-sitter:
-        specifier: ^0.26.10
-        version: 0.26.10
+        specifier: ^0.26.11
+        version: 0.26.11
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -1579,8 +1579,8 @@ packages:
       vite:
         optional: true
 
-  web-tree-sitter@0.26.10:
-    resolution: {integrity: sha512-vengBGYS7FpAerkR3o04oBL4L8MkVmjawK50AFBu7v0HZBkmF9ZavPGKoXLSSmRhp7T/YgsJ7joAS3yAxHPEqQ==}
+  web-tree-sitter@0.26.11:
+    resolution: {integrity: sha512-Q5Dm3YTIXSXuH6FxX6RuzX2Qwpc4DPGiYMU87Wg5Z8OIStiQFiUex4zMDc0vBTw78EphaYJacncJghCHzbZptg==}
 
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
@@ -2989,7 +2989,7 @@ snapshots:
     optionalDependencies:
       vite: 8.1.4(@types/node@24.13.3)(esbuild@0.28.1)
 
-  web-tree-sitter@0.26.10: {}
+  web-tree-sitter@0.26.11: {}
 
   which@2.0.2:
     dependencies:
