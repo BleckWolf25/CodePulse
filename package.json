@@ -117,7 +117,7 @@
     "@types/node": "24.x",
     "@types/vscode": "^1.125.0",
     "@vscode/test-cli": "^0.0.15",
-    "@vscode/test-electron": "^3.0.0",
+    "@vscode/test-electron": "^3.1.0",
     "chart.js": "^4.5.1",
     "esbuild": "^0.28.0",
     "eslint": "^10.7.0",
